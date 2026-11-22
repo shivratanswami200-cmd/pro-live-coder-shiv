@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro Live HTML Coder (Ultra-Smooth + Audio Sync + 1080p Studio)</title>
+  <style>
+    :root {
+      --bg-dark: #101215;
+      --panel-bg: #181b20;
+      --border: #2a2f38;
+      --accent: #3b82f6;
+      --success: #10b981;
+      --danger: #ef4444;
+      --purple: #8b5cf6;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      height: 50px;
+      background: var(--panel-bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      gap: 8px;
+    }
+    .brand {
+      font-weight: 800;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+    }
+    .home-btn {
+      text-decoration: none;
+      background: #232830;
+      color: #93c5fd;
+      border: 1px solid #334155;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .stats {
+      font-size: 11.5px;
+      color: #93c5fd;
+      background: #0f172a;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #1e3a8a;
+      font-family: monospace;
+    }
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button, select {
+      background: #232830;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    button:hover { background: #2f3640; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+    button.ai-merge-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: #032215;
+      font-weight: 800;
+      padding: 6px 12px;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+    }
+    button.ai-merge-btn:hover { filter: brightness(1.1); }
+    button.rec-btn {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+      font-weight: 700;
+    }
+    button.rec-btn.recording {
+      animation: pulseRec 1.2s infinite;
+      background: #b91c1c;
+    }
+    @keyframes pulseRec {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    }
+    .rec-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #101215;
+      padding: 3px 6px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+    }
+    .audio-check {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      color: #fde68a;
+      background: #1c1917;
+      border: 1px solid #78350f;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .sync-toggle {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      color: #a7f3d0;
+      background: #064e3b;
+      border: 1px solid #059669;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .mute-toggle {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      color: #fecaca;
+      background: #450a0a;
+      border: 1px solid #b91c1c;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    /* Audio Timeline Strip */
+    .audio-bar {
+      height: 40px;
+      background: #13161b;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .audio-bar audio {
+      height: 26px;
+      max-width: 220px;
+    }
+    .cue-btn {
+      background: #1e3a8a;
+      border-color: #2563eb;
+      color: #dbeafe;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .cue-list {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .cue-tag {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #fde68a;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 42% 58%;
+      height: calc(100vh - 90px);
+    }
+    .left-pane {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      background: var(--bg-dark);
+      height: 100%;
+    }
+    .editor-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      min-height: 0;
+    }
+    .snippet-box {
+      height: 36%;
+      border-top: 2px solid var(--border);
+      background: #14171c;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+    }
+    .box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      gap: 6px;
+    }
+    textarea {
+      flex: 1;
+      width: 100%;
+      background: #0b0d10;
+      color: #a5f3fc;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      font-family: Consolas, Monaco, 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      resize: none;
+      outline: none;
+      white-space: pre;
+      overflow: auto;
+    }
+    textarea:focus { border-color: var(--accent); }
+    .snippet-box textarea { color: #fde68a; }
+    .right-pane {
+      display: flex;
+      flex-direction: column;
+      background: #08090b;
+      height: 100%;
+    }
+    .preview-toolbar {
+      height: 34px;
+      background: #14171c;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .canvas-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow: hidden;
+      background-image: radial-gradient(#262b33 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    #stageScaler {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8);
+      background: #000;
+    }
+    #previewFrame {
+      width: 1920px;
+      height: 1080px;
+      border: none;
+      transform-origin: top left;
+      display: block;
+      background: #ffffff;
+    }
+    #toast {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: #10b981;
+      color: #032215;
+      padding: 9px 15px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      z-index: 999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <a href="index.html" class="home-btn">← Home</a>
+      <span>⚡ Pro Live HTML Coder</span>
+      <span class="stats" id="sizeBadge">Lines: 0 | 0 KB</span>
+    </div>
+    <div class="actions">
+      <button onclick="copyPromptRule()" style="background:#312e81; border-color:#4338ca; color:#c7d2fe;" title="नई चैट में AI को देने के लिए प्रोटोकॉल कॉपी करें">📋 AI Prompt</button>
+      <button id="undoBtn" onclick="undoMerge()" disabled title="पिछला बदलाव वापस लें">↩ Undo</button>
+      <button onclick="loadFile()">📂 खोलें</button>
+      <input type="file" id="fileInput" accept=".html,.htm,.txt" style="display:none" />
+      <button class="primary" onclick="renderPreview(true)">▶ Run</button>
+
+      <label class="audio-check" title="एक्सपोर्ट फाइल में ऑडियो साथ जोड़ें">
+        <input type="checkbox" id="embedAudioCheck" checked /> 🔊 Audio
+      </label>
+      <button onclick="downloadCode()" title="1920x1080 लॉक + मोबाइल ऑटो-फुलस्क्रीन के साथ डाउनलोड करें">💾 Export</button>
+
+      <div class="rec-group">
+        <select id="recRes">
+          <option value="1080">1080p</option>
+          <option value="720">720p</option>
+        </select>
+        <select id="recFps">
+          <option value="60">60 FPS</option>
+          <option value="30">30 FPS</option>
+        </select>
+        <button id="recordBtn" class="rec-btn" onclick="toggleRecording()">🔴 Record</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Audio Timeline & Sync Control Strip -->
+  <div class="audio-bar">
+    <button onclick="document.getElementById('audioInput').click()" style="white-space:nowrap;">🎵 Audio लोड करें</button>
+    <input type="file" id="audioInput" accept="audio/*" style="display:none" />
+    <audio id="audioPlayer" controls></audio>
+
+    <label class="sync-toggle" title="ON: ऑडियो और वीडियो एक साथ चलेंगे/रुकेंगे | OFF: दोनों अलग-अलग चलेंगे">
+      <input type="checkbox" id="attachSyncCheck" checked onchange="onSyncToggleChange()" /> 🔗 Attach Audio+Video
+    </label>
+
+    <label class="mute-toggle" title="HTML कोड के अंदर की अपनी आवाज (Voice/Video Sound/WebAudio) बंद करें">
+      <input type="checkbox" id="muteHtmlVoiceCheck" onchange="applyHtmlVoiceMute()" /> 🔇 Mute HTML Voice
+    </label>
+
+    <button class="cue-btn" onclick="markAudioCue()">📍 Mark Cue</button>
+    <div class="cue-list" id="cueList">ऑडियो फाइल लोड करके समय और सीन मार्क करें</div>
+  </div>
+
+  <main>
+    <div class="left-pane">
+      <div class="editor-box">
+        <div class="box-header">
+          <span>1. मुख्य HTML प्रोजेक्ट (1920×1080 लॉक • 15,000+ लाइंस)</span>
+          <button onclick="clearMain()" style="padding:2px 8px; font-size:11px;">Clear</button>
+        </div>
+        <textarea id="mainCode" spellcheck="false" placeholder="यहाँ अपना मुख्य HTML कोड पेस्ट करें..."></textarea>
+      </div>
+
+      <div class="snippet-box">
+        <div class="box-header">
+          <span>2. AI से मिला नया कोड यहाँ पेस्ट करें</span>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <select id="sceneSelector" title="ऑटो-डिटेक्टेड सीन या टारगेट" style="max-width:165px;">
+              <option value="auto">🧠 Auto-Intelligence</option>
+            </select>
+            <button class="ai-merge-btn" onclick="intelligentMerge()">✨ Auto-Merge</button>
+          </div>
+        </div>
+        <textarea id="snippetCode" spellcheck="false" placeholder="AI द्वारा दिया गया कोई भी नया Scene, SVG, CSS या Update कोड यहाँ पेस्ट करें और 'Auto-Merge' दबाएं..."></textarea>
+      </div>
+    </div>
+
+    <div class="right-pane">
+      <div class="preview-toolbar">
+        <span id="statusText">1920×1080 Strict Pixel-Lock Ready</span>
+        <span id="recTimer" style="color:#ef4444; font-weight:700; display:none;">● REC 00:00</span>
+        <span id="renderTime">Scale: 100% | 0 ms</span>
+      </div>
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <div id="stageScaler">
+          <iframe id="previewFrame" sandbox="allow-scripts allow-same-origin allow-modals"></iframe>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast">सफलतापूर्वक मर्ज हो गया!</div>
+
+  <script>
+    const mainCodeEl = document.getElementById('mainCode');
+    const snippetCodeEl = document.getElementById('snippetCode');
+    const previewFrame = document.getElementById('previewFrame');
+    const stageScaler = document.getElementById('stageScaler');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const sizeBadge = document.getElementById('sizeBadge');
+    const renderTimeEl = document.getElementById('renderTime');
+    const statusText = document.getElementById('statusText');
+    const undoBtn = document.getElementById('undoBtn');
+    const sceneSelector = document.getElementById('sceneSelector');
+    const recordBtn = document.getElementById('recordBtn');
+    const recTimerEl = document.getElementById('recTimer');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const cueListEl = document.getElementById('cueList');
+    const attachSyncCheck = document.getElementById('attachSyncCheck');
+    const muteHtmlVoiceCheck = document.getElementById('muteHtmlVoiceCheck');
+
+    let currentBlobUrl = null;
+    let debounceTimer = null;
+    let backupStack = [];
+    let currentScale = 1;
+    let lastRenderMs = 0;
+
+    let audioCues = [];
+    let loadedAudioBase64 = null;
+    let syncGuard = false;
+
+    let isRecording = false;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let captureStream = null;
+    let animFrameId = null;
+    let recInterval = null;
+    let recStartTime = 0;
+
+    function updateStageScale() {
+      const pad = 32;
+      const availW = canvasWrapper.clientWidth - pad;
+      const availH = canvasWrapper.clientHeight - pad;
+      if (availW <= 0 || availH <= 0) return;
+
+      currentScale = Math.min(availW / 1920, availH / 1080);
+      stageScaler.style.width = Math.round(1920 * currentScale) + 'px';
+      stageScaler.style.height = Math.round(1080 * currentScale) + 'px';
+      previewFrame.style.transform = `scale(${currentScale})`;
+      renderTimeEl.textContent = `Scale: ${Math.round(currentScale * 100)}% | ${lastRenderMs} ms`;
+    }
+
+    window.addEventListener('resize', updateStageScale);
+    updateStageScale();
+
+    // ========================================================
+    // DEEP INJECTED BRIDGE (Runs INSIDE iframe before user code)
+    // ========================================================
+    function buildInjectedSyncScript(isMutedInit, isAttachedInit) {
+      return `
+<script id="__proCoderSyncEngine">
+(function() {
+  window.__PRO_MUTED = ${isMutedInit ? 'true' : 'false'};
+  window.__PRO_ATTACHED = ${isAttachedInit ? 'true' : 'false'};
+  window.__PRO_AUDIO_LIST = [];
+  window.__PRO_CTX_LIST = [];
+
+  // 1. Intercept new Audio()
+  const OrigAudio = window.Audio;
+  window.Audio = function(src) {
+    const a = new OrigAudio(src);
+    a.muted = window.__PRO_MUTED;
+    window.__PRO_AUDIO_LIST.push(a);
+    return a;
+  };
+  window.Audio.prototype = OrigAudio.prototype;
+
+  // 2. Intercept Web Audio API (AudioContext)
+  const OrigAudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (OrigAudioCtx) {
+    const WrappedCtx = function(...args) {
+      const ctx = new OrigAudioCtx(...args);
+      window.__PRO_CTX_LIST.push(ctx);
+      if (window.__PRO_MUTED && ctx.state === 'running') {
+        ctx.suspend().catch(() => {});
+      }
+      return ctx;
+    };
+    WrappedCtx.prototype = OrigAudioCtx.prototype;
+    window.AudioContext = WrappedCtx;
+    if (window.webkitAudioContext) window.webkitAudioContext = WrappedCtx;
+  }
+
+  // 3. Intercept SpeechSynthesis (TTS)
+  if (window.speechSynthesis) {
+    const origSpeak = window.speechSynthesis.speak.bind(window.speechSynthesis);
+    window.speechSynthesis.speak = function(u) {
+      if (window.__PRO_MUTED) return;
+      return origSpeak(u);
+    };
+  }
+
+  // 4. Mute / Unmute Controller
+  window.__applyProMute = function(muted) {
+    window.__PRO_MUTED = !!muted;
+    document.querySelectorAll('audio, video').forEach(el => {
+      el.muted = window.__PRO_MUTED;
+    });
+    window.__PRO_AUDIO_LIST.forEach(a => {
+      try { a.muted = window.__PRO_MUTED; } catch(e) {}
+    });
+    window.__PRO_CTX_LIST.forEach(ctx => {
+      try {
+        if (window.__PRO_MUTED) ctx.suspend().catch(() => {});
+        else ctx.resume().catch(() => {});
+      } catch(e) {}
+    });
+    if (window.__PRO_MUTED && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  };
+
+  // Observe dynamically added <audio>/<video>
+  const obs = new MutationObserver(() => {
+    if (window.__PRO_MUTED) {
+      document.querySelectorAll('audio, video').forEach(el => { el.muted = true; });
+    }
+  });
+  window.addEventListener('DOMContentLoaded', () => {
+    obs.observe(document.body || document.documentElement, { childList: true, subtree: true });
+    window.__applyProMute(window.__PRO_MUTED);
+  });
+
+  // 5. Find Play/Pause/Restart Controls inside user HTML
+  function findControlButtons() {
+    const allBtns = Array.from(document.querySelectorAll('button, [role="button"], input[type="button"], .btn, [onclick]'));
+    let playBtn = null, pauseBtn = null, toggleBtn = null, restartBtn = null;
+
+    for (const b of allBtns) {
+      const info = ((b.id || '') + ' ' + (b.className || '') + ' ' + (b.textContent || '') + ' ' + (b.title || '') + ' ' + (b.getAttribute('aria-label') || '')).toLowerCase();
+      if (!restartBtn && (info.includes('restart') || info.includes('reset') || info.includes('replay') || info.includes('↺') || info.includes('⟲'))) {
+        restartBtn = b;
+      }
+      if ((info.includes('play') || info.includes('▶') || info.includes('►')) && (info.includes('pause') || info.includes('⏸') || info.includes('toggle'))) {
+        toggleBtn = b;
+      } else if (!playBtn && (info.includes('play') || info.includes('▶') || info.includes('►') || info.includes('start'))) {
+        playBtn = b;
+      } else if (!pauseBtn && (info.includes('pause') || info.includes('⏸') || info.includes('stop'))) {
+        pauseBtn = b;
+      }
+    }
+    return { playBtn, pauseBtn, toggleBtn, restartBtn };
+  }
+
+  function isHtmlCurrentlyPlaying() {
+    const medias = Array.from(document.querySelectorAll('video, audio'));
+    if (medias.some(m => !m.paused && !m.ended)) return true;
+    const { toggleBtn, playBtn } = findControlButtons();
+    const target = toggleBtn || playBtn;
+    if (target) {
+      const txt = (target.textContent || target.title || '').toLowerCase();
+      if (txt.includes('pause') || txt.includes('⏸')) return true;
+    }
+    return false;
+  }
+
+  // 6. Receive Master Command from Parent Editor
+  window.addEventListener('message', (ev) => {
+    const msg = ev.data;
+    if (!msg || msg.source !== 'PRO_CODER_PARENT') return;
+
+    if (msg.type === 'SET_ATTACHED') {
+      window.__PRO_ATTACHED = !!msg.attached;
+      return;
+    }
+    if (msg.type === 'SET_MUTED') {
+      window.__applyProMute(msg.muted);
+      return;
+    }
+
+    if (!window.__PRO_ATTACHED) return;
+
+    window.__PRO_IGNORE_CLICK = true;
+    setTimeout(() => { window.__PRO_IGNORE_CLICK = false; }, 150);
+
+    const { action, time } = msg;
+    const { playBtn, pauseBtn, toggleBtn, restartBtn } = findControlButtons();
+
+    // Sync HTML5 media elements
+    document.querySelectorAll('video, audio').forEach(m => {
+      if (typeof time === 'number' && !isNaN(time) && Math.abs((m.currentTime || 0) - time) > 0.25) {
+        try { m.currentTime = time; } catch(e) {}
+      }
+      if (action === 'play' && m.paused) m.play().catch(() => {});
+      if (action === 'pause' && !m.paused) m.pause();
+    });
+
+    // Sync Range Sliders / Timeline Scrubber if seeking
+    if (action === 'seek' && typeof time === 'number') {
+      const slider = document.querySelector('input[type="range"]');
+      if (slider) {
+        slider.value = time;
+        slider.dispatchEvent(new Event('input', { bubbles: true }));
+        slider.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (typeof window.seekTo === 'function') window.seekTo(time);
+      else if (typeof window.goToTime === 'function') window.goToTime(time);
+      else if (typeof window.setTime === 'function') window.setTime(time);
+    }
+
+    // Sync Custom JS Animation Timeline
+    if (action === 'play') {
+      if (typeof window.playAnimation === 'function') window.playAnimation();
+      else if (typeof window.startAnimation === 'function') window.startAnimation();
+      else if (typeof window.resumeAnimation === 'function') window.resumeAnimation();
+      else if (playBtn) playBtn.click();
+      else if (toggleBtn && !isHtmlCurrentlyPlaying()) toggleBtn.click();
+    } else if (action === 'pause') {
+      if (typeof window.pauseAnimation === 'function') window.pauseAnimation();
+      else if (typeof window.stopAnimation === 'function') window.stopAnimation();
+      else if (pauseBtn) pauseBtn.click();
+      else if (toggleBtn && isHtmlCurrentlyPlaying()) toggleBtn.click();
+    }
+  });
+
+  // 7. Forward User Clicks inside HTML (Play/Pause/Restart) -> Parent Audio Player
+  document.addEventListener('click', (e) => {
+    if (window.__PRO_IGNORE_CLICK || !window.__PRO_ATTACHED) return;
+    const btn = e.target.closest('button, [role="button"], input[type="button"], .btn, [onclick]');
+    if (!btn) return;
+
+    const info = ((btn.id || '') + ' ' + (btn.className || '') + ' ' + (btn.textContent || '') + ' ' + (btn.title || '') + ' ' + (btn.getAttribute('aria-label') || '')).toLowerCase();
+
+    if (info.includes('restart') || info.includes('reset') || info.includes('replay') || info.includes('↺') || info.includes('⟲')) {
+      window.parent.postMessage({ source: 'PRO_CODER_IFRAME', action: 'restart' }, '*');
+    } else if ((info.includes('play') || info.includes('▶') || info.includes('►')) && (info.includes('pause') || info.includes('⏸') || info.includes('toggle'))) {
+      // Toggle button: check state right after click
+      setTimeout(() => {
+        const playing = isHtmlCurrentlyPlaying();
+        window.parent.postMessage({ source: 'PRO_CODER_IFRAME', action: playing ? 'play' : 'pause' }, '*');
+      }, 30);
+    } else if (info.includes('pause') || info.includes('⏸')) {
+      window.parent.postMessage({ source: 'PRO_CODER_IFRAME', action: 'pause' }, '*');
+    } else if (info.includes('play') || info.includes('▶') || info.includes('►') || info.includes('start')) {
+      window.parent.postMessage({ source: 'PRO_CODER_IFRAME', action: 'play' }, '*');
+    }
+  }, true);
+
+  // Forward native <video> play/pause events
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('video').forEach(v => {
+      v.addEventListener('play', () => {
+        if (!window.__PRO_IGNORE_CLICK && window.__PRO_ATTACHED) {
+          window.parent.postMessage({ source: 'PRO_CODER_IFRAME', action: 'play', time: v.currentTime }, '*');
+        }
+      });
+      v.addEventListener('pause', () => {
+        if (!window.__PRO_IGNORE_CLICK && window.__PRO_ATTACHED) {
+          window.parent.postMessage({ source: 'PRO_CODER_IFRAME', action: 'pause', time: v.currentTime }, '*');
+        }
+      });
+    });
+  });
+})();
+<\/script>`;
+    }
+
+    function sendToIframe(payload) {
+      if (previewFrame.contentWindow) {
+        previewFrame.contentWindow.postMessage({ source: 'PRO_CODER_PARENT', ...payload }, '*');
+      }
+    }
+
+    function onSyncToggleChange() {
+      const attached = attachSyncCheck.checked;
+      sendToIframe({ type: 'SET_ATTACHED', attached });
+      if (attached) {
+        showToast("🔗 Attached ON: अब Audio और Video एक साथ चलेंगे/रुकेंगे");
+        if (!audioPlayer.paused) {
+          sendToIframe({ action: 'play', time: audioPlayer.currentTime });
+        }
+      } else {
+        showToast("🔓 Detached OFF: अब Audio और Video दोनों अलग-अलग चलेंगे");
+      }
+    }
+
+    function applyHtmlVoiceMute() {
+      const muted = muteHtmlVoiceCheck.checked;
+      sendToIframe({ type: 'SET_MUTED', muted });
+      showToast(muted ? "🔇 HTML की अपनी आवाज (Voice/Sound) बंद कर दी गई" : "🔊 HTML की अपनी आवाज चालू कर दी गई");
+    }
+
+    // Parent Audio Player -> Iframe
+    audioPlayer.addEventListener('play', () => {
+      if (syncGuard || !attachSyncCheck.checked) return;
+      sendToIframe({ action: 'play', time: audioPlayer.currentTime });
+    });
+
+    audioPlayer.addEventListener('pause', () => {
+      if (syncGuard || !attachSyncCheck.checked) return;
+      sendToIframe({ action: 'pause', time: audioPlayer.currentTime });
+    });
+
+    audioPlayer.addEventListener('seeked', () => {
+      if (syncGuard || !attachSyncCheck.checked) return;
+      sendToIframe({ action: 'seek', time: audioPlayer.currentTime });
+    });
+
+    // Iframe -> Parent Audio Player
+    window.addEventListener('message', (ev) => {
+      const msg = ev.data;
+      if (!msg || msg.source !== 'PRO_CODER_IFRAME') return;
+      if (!attachSyncCheck.checked || !audioPlayer.src) return;
+
+      syncGuard = true;
+      if (msg.action === 'restart') {
+        audioPlayer.currentTime = 0;
+        audioPlayer.play().catch(() => {});
+      } else if (msg.action === 'play') {
+        if (typeof msg.time === 'number' && Math.abs(audioPlayer.currentTime - msg.time) > 0.3) {
+          audioPlayer.currentTime = msg.time;
+        }
+        if (audioPlayer.paused) audioPlayer.play().catch(() => {});
+      } else if (msg.action === 'pause') {
+        if (!audioPlayer.paused) audioPlayer.pause();
+      }
+      setTimeout(() => { syncGuard = false; }, 150);
+    });
+
+    // Audio Timeline & Cue Marker
+    document.getElementById('audioInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      audioPlayer.src = URL.createObjectURL(file);
+      audioCues = [];
+      cueListEl.innerHTML = '<span>ऑडियो तैयार है — प्ले करके "Mark Cue" दबाएं</span>';
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        loadedAudioBase64 = ev.target.result;
+        showToast(`ऑडियो लोड हो गया (${file.name})`);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function markAudioCue() {
+      if (!audioPlayer.src) {
+        showToast("पहले कोई ऑडियो फाइल लोड करें!");
+        return;
+      }
+      const t = audioPlayer.currentTime.toFixed(1);
+      audioCues.push(t);
+      cueListEl.innerHTML = audioCues.map((sec, idx) =>
+        `<span class="cue-tag" onclick="jumpToCue(${sec})">Scene ${idx + 1}: ${sec}s</span>`
+      ).join('');
+      navigator.clipboard.writeText(`मेरे Pro Live HTML Coder प्रोजेक्ट में ठीक ${t}s पर नया एनिमेशन/सीन जोड़ने का कोड दो।`);
+      showToast(`Cue मार्क: ${t}s (AI प्रॉम्प्ट कॉपी हो गया)`);
+    }
+
+    function jumpToCue(sec) {
+      audioPlayer.currentTime = parseFloat(sec);
+      navigator.clipboard.writeText(`मेरे Pro Live HTML Coder प्रोजेक्ट में ठीक ${sec}s पर नया एनिमेशन/सीन जोड़ने का कोड दो।`);
+      showToast(`${sec}s के लिए AI प्रॉम्प्ट कॉपी हो गया!`);
+    }
+
+    function scanScenes(code) {
+      const prevVal = sceneSelector.value;
+      sceneSelector.innerHTML = `
+        <option value="auto">🧠 Auto-Intelligence</option>
+        <option value="cursor">📍 At Cursor Position</option>
+        <option value="bodyEnd">⬇ End of &lt;/body&gt;</option>
+      `;
+
+      if (!code) return;
+      const lines = code.split('\n');
+      const foundIds = new Set();
+
+      lines.forEach((line, idx) => {
+        const idMatch = line.match(/id=["']([a-zA-Z0-9_-]+)["']/i);
+        if (idMatch) {
+          const idName = idMatch[1];
+          if (!foundIds.has(idName) && foundIds.size < 40) {
+            foundIds.add(idName);
+            const opt = document.createElement('option');
+            opt.value = `id:${idName}`;
+            opt.textContent = `#${idName} (Line ${idx + 1})`;
+            sceneSelector.appendChild(opt);
+          }
+        }
+      });
+
+      if (Array.from(sceneSelector.options).some(o => o.value === prevVal)) {
+        sceneSelector.value = prevVal;
+      }
+    }
+
+    function updateStats(code) {
+      const bytes = new Blob([code]).size;
+      const lineCount = code ? code.split('\n').length : 0;
+      const kb = (bytes / 1024).toFixed(1);
+      const mb = (bytes / (1024 * 1024)).toFixed(2);
+      const isHeavy = lineCount > 3000 || bytes > 200 * 1024;
+      const sizeStr = bytes > 1024 * 1024 ? `${mb} MB` : `${kb} KB`;
+      sizeBadge.textContent = `Lines: ${lineCount.toLocaleString()} | ${sizeStr}`;
+      return isHeavy;
+    }
+
+    function renderPreview(force = false) {
+      const code = mainCodeEl.value;
+      const isHeavy = updateStats(code);
+      scanScenes(code);
+
+      if (isHeavy && !force) {
+        statusText.textContent = "बड़ी फाइल — अपडेट देखने के लिए '▶ Run' दबाएं";
+        return;
+      }
+
+      // Inject Sync & Mute Bridge at the very top of <head> so it intercepts Audio/AudioContext before user scripts run
+      const bridgeScript = buildInjectedSyncScript(muteHtmlVoiceCheck.checked, attachSyncCheck.checked);
+      let previewHtml = code;
+      if (/<head[^>]*>/i.test(previewHtml)) {
+        previewHtml = previewHtml.replace(/<head[^>]*>/i, (match) => `${match}\n${bridgeScript}`);
+      } else {
+        previewHtml = `${bridgeScript}\n${previewHtml}`;
+      }
+
+      const t0 = performance.now();
+      if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+      const blob = new Blob([previewHtml], { type: 'text/html' });
+      currentBlobUrl = URL.createObjectURL(blob);
+      previewFrame.src = currentBlobUrl;
+
+      previewFrame.onload = () => {
+        lastRenderMs = Math.round(performance.now() - t0);
+        updateStageScale();
+        sendToIframe({ type: 'SET_MUTED', muted: muteHtmlVoiceCheck.checked });
+        sendToIframe({ type: 'SET_ATTACHED', attached: attachSyncCheck.checked });
+        if (!isRecording) statusText.textContent = "Pixel-Locked 1920×1080 Active";
+      };
+    }
+
+    mainCodeEl.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const isHeavy = updateStats(mainCodeEl.value);
+      if (!isHeavy) {
+        debounceTimer = setTimeout(() => renderPreview(false), 500);
+      }
+    });
+
+    function findElementRangeById(html, targetId) {
+      const openRegex = new RegExp(`<([a-zA-Z0-9-]+)[^>]*\\bid=["']${targetId}["'][^>]*>`, 'i');
+      const match = html.match(openRegex);
+      if (!match) return null;
+
+      const tagName = match[1].toLowerCase();
+      const startIdx = match.index;
+      const contentStartIdx = startIdx + match[0].length;
+
+      const tagRegex = new RegExp(`<(\\/?)${tagName}\\b[^>]*>`, 'gi');
+      tagRegex.lastIndex = contentStartIdx;
+      let depth = 1;
+      let m;
+      while ((m = tagRegex.exec(html)) !== null) {
+        if (m[1] === '/') depth--;
+        else if (!m[0].endsWith('/>')) depth++;
+
+        if (depth === 0) {
+          return {
+            start: startIdx,
+            contentStart: contentStartIdx,
+            contentEnd: m.index,
+            end: m.index + m[0].length
+          };
+        }
+      }
+      return { start: startIdx, contentStart: contentStartIdx, contentEnd: contentStartIdx, end: contentStartIdx };
+    }
+
+    function intelligentMerge() {
+      let baseCode = mainCodeEl.value;
+      const rawSnippet = snippetCodeEl.value.trim();
+
+      if (!rawSnippet) {
+        showToast("पहले नीचे वाले बॉक्स में कोड पेस्ट करें!");
+        return;
+      }
+
+      if (backupStack.length >= 8) backupStack.shift();
+      backupStack.push(baseCode);
+      undoBtn.disabled = false;
+
+      if (!baseCode.trim()) {
+        baseCode = `<!DOCTYPE html>\n<html lang="hi">\n<head>\n  <meta charset="UTF-8">\n</head>\n<body>\n  <div id="stage"></div>\n</body>\n</html>`;
+      }
+
+      const replaceMatch = rawSnippet.match(/<!--\s*REPLACE_ID:\s*([a-zA-Z0-9_-]+)\s*-->/i);
+      const insertInsideMatch = rawSnippet.match(/<!--\s*INSERT_SCENE:\s*([a-zA-Z0-9_-]+)\s*-->/i);
+      const insertAfterMatch = rawSnippet.match(/<!--\s*INSERT_AFTER_ID:\s*([a-zA-Z0-9_-]+)\s*-->/i);
+
+      const parser = new DOMParser();
+      const snippetDoc = parser.parseFromString(rawSnippet, 'text/html');
+
+      let extractedStyles = "";
+      snippetDoc.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
+        extractedStyles += "\n" + el.outerHTML;
+        el.remove();
+      });
+
+      let extractedScripts = "";
+      snippetDoc.querySelectorAll('script').forEach(el => {
+        extractedScripts += "\n" + el.outerHTML;
+        el.remove();
+      });
+
+      const headExtras = Array.from(snippetDoc.head.children).map(el => el.outerHTML).join("\n");
+      const bodyVisuals = [headExtras, snippetDoc.body.innerHTML.trim()].filter(Boolean).join("\n");
+
+      if (extractedStyles.trim()) {
+        const headCloseIdx = baseCode.toLowerCase().lastIndexOf('</head>');
+        if (headCloseIdx !== -1) {
+          baseCode = baseCode.slice(0, headCloseIdx) + `\n<!-- AI Merged CSS -->${extractedStyles}\n` + baseCode.slice(headCloseIdx);
+        } else {
+          baseCode = extractedStyles + "\n" + baseCode;
+        }
+      }
+
+      let placementInfo = "Body End";
+      if (bodyVisuals.trim()) {
+        const manualMode = sceneSelector.value;
+        let wasInserted = false;
+
+        if (replaceMatch) {
+          const targetId = replaceMatch[1];
+          const range = findElementRangeById(baseCode, targetId);
+          if (range) {
+            baseCode = baseCode.slice(0, range.start) + bodyVisuals + baseCode.slice(range.end);
+            placementInfo = `Replaced #${targetId}`;
+            wasInserted = true;
+          }
+        } else if (insertAfterMatch) {
+          const targetId = insertAfterMatch[1];
+          const range = findElementRangeById(baseCode, targetId);
+          if (range) {
+            baseCode = baseCode.slice(0, range.end) + `\n${bodyVisuals}\n` + baseCode.slice(range.end);
+            placementInfo = `After #${targetId}`;
+            wasInserted = true;
+          }
+        } else if (insertInsideMatch || manualMode.startsWith('id:')) {
+          const targetId = insertInsideMatch ? insertInsideMatch[1] : manualMode.replace('id:', '');
+          if (targetId.toLowerCase() !== 'body') {
+            const range = findElementRangeById(baseCode, targetId);
+            if (range) {
+              baseCode = baseCode.slice(0, range.contentEnd) + `\n${bodyVisuals}\n` + baseCode.slice(range.contentEnd);
+              placementInfo = `Inside #${targetId}`;
+              wasInserted = true;
+            }
+          }
+        } else if (manualMode === 'cursor') {
+          const cursorPos = mainCodeEl.selectionStart || baseCode.length;
+          baseCode = baseCode.slice(0, cursorPos) + `\n${bodyVisuals}\n` + baseCode.slice(cursorPos);
+          placementInfo = "At Cursor";
+          wasInserted = true;
+        } else {
+          const sceneHint = rawSnippet.match(/(scene[-_]?\d+|stage|map[-_]?container|timeline)/i);
+          if (sceneHint) {
+            const guessedId = sceneHint[1];
+            const range = findElementRangeById(baseCode, guessedId);
+            if (range) {
+              baseCode = baseCode.slice(0, range.contentEnd) + `\n${bodyVisuals}\n` + baseCode.slice(range.contentEnd);
+              placementInfo = `Auto-Matched #${guessedId}`;
+              wasInserted = true;
+            }
+          }
+        }
+
+        if (!wasInserted) {
+          const bodyCloseIdx = baseCode.toLowerCase().lastIndexOf('</body>');
+          if (bodyCloseIdx !== -1) {
+            baseCode = baseCode.slice(0, bodyCloseIdx) + `\n${bodyVisuals}\n` + baseCode.slice(bodyCloseIdx);
+          } else {
+            baseCode += `\n${bodyVisuals}`;
+          }
+        }
+      }
+
+      if (extractedScripts.trim()) {
+        const bodyCloseIdx = baseCode.toLowerCase().lastIndexOf('</body>');
+        if (bodyCloseIdx !== -1) {
+          baseCode = baseCode.slice(0, bodyCloseIdx) + `\n<!-- AI Merged Script -->${extractedScripts}\n` + baseCode.slice(bodyCloseIdx);
+        } else {
+          baseCode += `\n${extractedScripts}`;
+        }
+      }
+
+      mainCodeEl.value = baseCode;
+      snippetCodeEl.value = "";
+      renderPreview(true);
+      showToast(`✨ स्मार्ट मर्ज सफल (${placementInfo})`);
+    }
+
+    function copyPromptRule() {
+      const ruleText = `मेरे पास "Pro Live HTML Coder" टूल है (1920x1080 Fixed Stage)। जब भी तुम मुझे नया HTML/CSS/SVG/JS कोड या कोई अपडेट दो, तो उसमें ये स्मार्ट मार्कर्स ज़रूर लगाना ताकि मेरा टूल उसे सही लाइन पर ऑटो-मर्ज कर सके:\n1. किसी सीन या कंटेनर के अंदर जोड़ने के लिए सबसे ऊपर लिखो: <!-- INSERT_SCENE: scene_id -->\n2. किसी पुराने हिस्से को बदलने के लिए लिखो: <!-- REPLACE_ID: target_id -->\n3. किसी एलिमेंट के ठीक नीचे जोड़ने के लिए लिखो: <!-- INSERT_AFTER_ID: target_id -->\nकोड हमेशा 1920x1080 फिक्स्ड कैनवास के हिसाब से देना।`;
+      navigator.clipboard.writeText(ruleText);
+      showToast("AI प्रोटोकॉल कॉपी हो गया! नई चैट में इसे पेस्ट कर दें।");
+    }
+
+    // EXPORT WITH FULL-SIZE 1920x1080 LOCK + ATTACHED AUDIO + OPTIONAL HTML VOICE MUTE
+    function downloadCode() {
+      let finalCode = mainCodeEl.value;
+      if (!finalCode.trim()) return;
+
+      const includeAudio = document.getElementById('embedAudioCheck').checked && loadedAudioBase64;
+      const muteHtmlVoice = muteHtmlVoiceCheck.checked;
+      let audioTag = "";
+      let audioSyncScript = "";
+
+      if (includeAudio) {
+        audioTag = `\n<audio id="bundledMasterAudio" src="${loadedAudioBase64}" preload="auto"></audio>\n`;
+        audioSyncScript = `
+          const aud = document.getElementById('bundledMasterAudio');
+          if (aud) {
+            document.addEventListener('click', (e) => {
+              const btn = e.target.closest('button, [role="button"], input[type="button"], .btn, [onclick]');
+              if (btn) {
+                const info = ((btn.id || '') + ' ' + (btn.className || '') + ' ' + (btn.textContent || '') + ' ' + (btn.title || '')).toLowerCase();
+                if (info.includes('restart') || info.includes('reset') || info.includes('replay') || info.includes('↺')) {
+                  aud.currentTime = 0;
+                  aud.play().catch(() => {});
+                } else if ((info.includes('play') || info.includes('▶')) && (info.includes('pause') || info.includes('⏸') || info.includes('toggle'))) {
+                  if (aud.paused) aud.play().catch(() => {});
+                  else aud.pause();
+                } else if (info.includes('pause') || info.includes('⏸')) {
+                  aud.pause();
+                } else if (info.includes('play') || info.includes('▶') || info.includes('start')) {
+                  if (aud.paused) aud.play().catch(() => {});
+                }
+              } else if (aud.paused) {
+                aud.play().catch(() => {});
+              }
+            }, true);
+          }
+        `;
+      }
+
+      const muteHeadInterceptor = muteHtmlVoice ? `
+<script id="export-voice-mute">
+  (function() {
+    const OrigAudio = window.Audio;
+    window.Audio = function(src) { const a = new OrigAudio(src); a.muted = true; return a; };
+    window.Audio.prototype = OrigAudio.prototype;
+    const OrigCtx = window.AudioContext || window.webkitAudioContext;
+    if (OrigCtx) {
+      const W = function(...args) { const c = new OrigCtx(...args); c.suspend().catch(() => {}); return c; };
+      W.prototype = OrigCtx.prototype;
+      window.AudioContext = W;
+      if (window.webkitAudioContext) window.webkitAudioContext = W;
+    }
+    if (window.speechSynthesis) { window.speechSynthesis.speak = function() {}; }
+    window.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('audio:not(#bundledMasterAudio), video').forEach(el => { el.muted = true; });
+    });
+  })();
+<\/script>` : '';
+
+      if (!finalCode.includes('id="strict-1080p-lock"')) {
+        const lockStyle = `
+<style id="strict-1080p-lock">
+  html {
+    background: #000000 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body {
+    width: 1920px !important;
+    height: 1080px !important;
+    min-width: 1920px !important;
+    max-width: 1920px !important;
+    min-height: 1080px !important;
+    max-height: 1080px !important;
+    overflow: hidden !important;
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform-origin: center center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    will-change: transform;
+  }
+</style>`;
+
+        const lockScript = `${audioTag}
+<script>
+  (function lockExact1080pMobileReady() {
+    function fitExactCanvas() {
+      const vw = document.documentElement.clientWidth || window.innerWidth;
+      const vh = document.documentElement.clientHeight || window.innerHeight;
+      const scale = Math.min(vw / 1920, vh / 1080);
+      document.body.style.setProperty('transform', 'translate(-50%, -50%) scale(' + scale + ')', 'important');
+    }
+    window.addEventListener('resize', fitExactCanvas);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', fitExactCanvas);
+    }
+    fitExactCanvas();
+    setTimeout(fitExactCanvas, 100);
+    setTimeout(fitExactCanvas, 500);
+
+    function enterMobileFullscreen() {
+      const el = document.documentElement;
+      if (!document.fullscreenElement) {
+        const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if (req) {
+          req.call(el).then(() => {
+            if (screen.orientation && screen.orientation.lock) {
+              screen.orientation.lock('landscape').catch(() => {});
+            }
+            setTimeout(fitExactCanvas, 150);
+          }).catch(() => {});
+        }
+      }
+    }
+    document.addEventListener('click', enterMobileFullscreen, { capture: true });
+    ${audioSyncScript}
+  })();
+<\/script>`;
+
+        if (/<head[^>]*>/i.test(finalCode) && muteHeadInterceptor) {
+          finalCode = finalCode.replace(/<head[^>]*>/i, (m) => `${m}\n${muteHeadInterceptor}`);
+        } else if (muteHeadInterceptor) {
+          finalCode = `${muteHeadInterceptor}\n${finalCode}`;
+        }
+
+        const headIdx = finalCode.toLowerCase().lastIndexOf('</head>');
+        finalCode = headIdx !== -1 ? finalCode.slice(0, headIdx) + lockStyle + "\n" + finalCode.slice(headIdx) : lockStyle + "\n" + finalCode;
+
+        const bodyIdx = finalCode.toLowerCase().lastIndexOf('</body>');
+        finalCode = bodyIdx !== -1 ? finalCode.slice(0, bodyIdx) + lockScript + "\n" + finalCode.slice(bodyIdx) : finalCode + "\n" + lockScript;
+      }
+
+      const blob = new Blob([finalCode], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = includeAudio ? 'pro_1080p_with_audio.html' : 'pro_1920x1080_mobile_fullscreen.html';
+      a.click();
+      showToast(includeAudio ? "ऑडियो सहित फुल-साइज 1080p फाइल एक्सपोर्ट हो गई!" : "मोबाइल फुलस्क्रीन + 1080p लॉक फाइल एक्सपोर्ट हो गई!");
+    }
+
+    async function fixWebmDuration(blob, durationMs) {
+      try {
+        const buffer = await blob.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        let infoPos = -1;
+        for (let i = 0; i < Math.min(bytes.length, 4096); i++) {
+          if (bytes[i] === 0x15 && bytes[i+1] === 0x49 && bytes[i+2] === 0xA9 && bytes[i+3] === 0x66) {
+            infoPos = i;
+            break;
+          }
+        }
+        if (infoPos === -1) return blob;
+
+        for (let i = infoPos; i < Math.min(bytes.length, infoPos + 200); i++) {
+          if (bytes[i] === 0x2A && bytes[i+1] === 0xD7 && bytes[i+2] === 0xB1) {
+            const scaleLen = bytes[i+3] & 0x7F;
+            const insertAt = i + 4 + scaleLen;
+
+            const durElem = new Uint8Array(11);
+            durElem[0] = 0x44;
+            durElem[1] = 0x89;
+            durElem[2] = 0x88;
+            new DataView(durElem.buffer).setFloat64(3, durationMs, false);
+
+            const combined = new Uint8Array(bytes.length + 11);
+            combined.set(bytes.slice(0, insertAt), 0);
+            combined.set(durElem, insertAt);
+            combined.set(bytes.slice(insertAt), insertAt + 11);
+
+            const infoSizeByte = combined[infoPos + 4];
+            if ((infoSizeByte & 0x80) !== 0 && (infoSizeByte & 0x7F) + 11 < 127) {
+              combined[infoPos + 4] = infoSizeByte + 11;
+            }
+            return new Blob([combined], { type: 'video/webm' });
+          }
+        }
+        return blob;
+      } catch (e) {
+        return blob;
+      }
+    }
+
+    async function toggleRecording() {
+      if (isRecording) { stopRecording(); return; }
+
+      const resHeight = parseInt(document.getElementById('recRes').value, 10);
+      const targetFps = parseInt(document.getElementById('recFps').value, 10);
+      const outWidth = resHeight === 1080 ? 1920 : 1280;
+      const outHeight = resHeight === 1080 ? 1080 : 720;
+
+      try {
+        captureStream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            displaySurface: "browser",
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+            frameRate: { ideal: targetFps, max: targetFps }
+          },
+          audio: true,
+          preferCurrentTab: true
+        });
+
+        const videoTrack = captureStream.getVideoTracks()[0];
+        const hiddenVideo = document.createElement('video');
+        hiddenVideo.srcObject = captureStream;
+        hiddenVideo.muted = true;
+        await hiddenVideo.play();
+
+        const cropCanvas = document.createElement('canvas');
+        cropCanvas.width = outWidth;
+        cropCanvas.height = outHeight;
+        const ctx = cropCanvas.getContext('2d', { alpha: false, desynchronized: true });
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        renderPreview(true);
+
+        function drawCroppedFrame() {
+          if (!isRecording) return;
+          const rect = stageScaler.getBoundingClientRect();
+          const dpr = window.devicePixelRatio || 1;
+          const scaleX = hiddenVideo.videoWidth / (window.innerWidth * dpr) * dpr;
+          const scaleY = hiddenVideo.videoHeight / (window.innerHeight * dpr) * dpr;
+
+          const sx = Math.round(rect.left * scaleX);
+          const sy = Math.round(rect.top * scaleY);
+          const sw = Math.round(rect.width * scaleX);
+          const sh = Math.round(rect.height * scaleY);
+
+          if (sw > 0 && sh > 0) {
+            ctx.drawImage(hiddenVideo, sx, sy, sw, sh, 0, 0, outWidth, outHeight);
+          }
+          animFrameId = requestAnimationFrame(drawCroppedFrame);
+        }
+
+        isRecording = true;
+        recStartTime = performance.now();
+        drawCroppedFrame();
+
+        const canvasStream = cropCanvas.captureStream(targetFps);
+        const audioTracks = captureStream.getAudioTracks();
+        if (audioTracks.length > 0) canvasStream.addTrack(audioTracks[0]);
+
+        let mimeType = 'video/webm';
+        if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+          mimeType = 'video/webm;codecs=vp9';
+        } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+          mimeType = 'video/webm;codecs=vp8';
+        }
+
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(canvasStream, {
+          mimeType: mimeType,
+          videoBitsPerSecond: resHeight === 1080 ? 16000000 : 8000000
+        });
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          const totalDurationMs = Math.max(1000, performance.now() - recStartTime);
+          const rawBlob = new Blob(recordedChunks, { type: 'video/webm' });
+          const fixedBlob = await fixWebmDuration(rawBlob, totalDurationMs);
+
+          const url = URL.createObjectURL(fixedBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `HD_stage_${resHeight}p_${targetFps}fps.webm`;
+          a.click();
+          URL.revokeObjectURL(url);
+          showToast(`HD वीडियो तैयार (${Math.round(totalDurationMs / 1000)}s • ${resHeight}p)!`);
+        };
+
+        videoTrack.onended = () => { if (isRecording) stopRecording(); };
+        mediaRecorder.start(100);
+
+        recordBtn.textContent = "⏹ Stop";
+        recordBtn.classList.add('recording');
+        statusText.textContent = `Recording HD ${resHeight}p @ ${targetFps} FPS...`;
+        recTimerEl.style.display = "inline";
+        let sec = 0;
+        recTimerEl.textContent = "● REC 00:00";
+        recInterval = setInterval(() => {
+          sec++;
+          recTimerEl.textContent = `● REC ${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+        }, 1000);
+
+      } catch (err) {
+        showToast("रिकॉर्डिंग रद्द कर दी गई।");
+        isRecording = false;
+      }
+    }
+
+    function stopRecording() {
+      isRecording = false;
+      cancelAnimationFrame(animFrameId);
+      clearInterval(recInterval);
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      if (captureStream) captureStream.getTracks().forEach(track => track.stop());
+
+      recordBtn.textContent = "🔴 Record";
+      recordBtn.classList.remove('recording');
+      recTimerEl.style.display = "none";
+      statusText.textContent = "Pixel-Locked 1920×1080 Active";
+    }
+
+    function undoMerge() {
+      if (backupStack.length === 0) return;
+      mainCodeEl.value = backupStack.pop();
+      if (backupStack.length === 0) undoBtn.disabled = true;
+      renderPreview(true);
+      showToast("पिछला बदलाव वापस (Undo) कर दिया गया!");
+    }
+
+    function loadFile() { document.getElementById('fileInput').click(); }
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        mainCodeEl.value = ev.target.result;
+        renderPreview(true);
+        showToast(`फाइल लोड हो गई (${file.name})`);
+      };
+      reader.readAsText(file);
+    });
+
+    function clearMain() {
+      backupStack.push(mainCodeEl.value);
+      undoBtn.disabled = false;
+      mainCodeEl.value = '';
+      updateStats('');
+      scanScenes('');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+  </script>
+</body>
+</html>
