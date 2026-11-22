@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Single-File Ultra Live HTML Coder (1920×1080 + Audio Export)</title>
+  <title>Pro Live HTML Coder (Ultra-Smooth + Audio Sync + 1080p Studio)</title>
   <style>
     :root {
-      --bg-dark: #0e1014;
-      --panel-bg: #161920;
-      --border: #272c36;
+      --bg-dark: #101215;
+      --panel-bg: #181b20;
+      --border: #2a2f38;
       --accent: #3b82f6;
       --success: #10b981;
+      --danger: #ef4444;
+      --purple: #8b5cf6;
       --text: #f3f4f6;
       --muted: #9ca3af;
     }
@@ -36,28 +38,27 @@
     }
     .brand {
       font-weight: 800;
-      font-size: 13.5px;
+      font-size: 14px;
       display: flex;
       align-items: center;
       gap: 8px;
       color: #fff;
     }
-    .home-link {
+    .home-btn {
       text-decoration: none;
-      background: #222730;
+      background: #232830;
       color: #93c5fd;
       border: 1px solid #334155;
-      padding: 4px 9px;
+      padding: 4px 8px;
       border-radius: 6px;
       font-size: 12px;
       font-weight: 600;
     }
-    .home-link:hover { background: #2d3440; }
     .stats {
-      font-size: 11px;
+      font-size: 11.5px;
       color: #93c5fd;
       background: #0f172a;
-      padding: 3px 8px;
+      padding: 4px 8px;
       border-radius: 6px;
       border: 1px solid #1e3a8a;
       font-family: monospace;
@@ -68,7 +69,7 @@
       gap: 6px;
     }
     button, select {
-      background: #222730;
+      background: #232830;
       color: var(--text);
       border: 1px solid var(--border);
       padding: 5px 9px;
@@ -77,7 +78,7 @@
       cursor: pointer;
       transition: 0.15s;
     }
-    button:hover { background: #2e3542; }
+    button:hover { background: #2f3640; }
     button:disabled { opacity: 0.4; cursor: not-allowed; }
     button.primary {
       background: var(--accent);
@@ -85,23 +86,37 @@
       color: #fff;
       font-weight: 600;
     }
-    button.export-btn {
-      background: #f59e0b;
-      border-color: #d97706;
-      color: #111827;
-      font-weight: 800;
-    }
-    button.btn-ai {
-      background: #312e81;
-      border-color: #4338ca;
-      color: #c7d2fe;
-    }
     button.ai-merge-btn {
       background: linear-gradient(135deg, #10b981, #059669);
       border: none;
       color: #032215;
       font-weight: 800;
-      padding: 5px 12px;
+      padding: 6px 12px;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+    }
+    button.ai-merge-btn:hover { filter: brightness(1.1); }
+    button.rec-btn {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+      font-weight: 700;
+    }
+    button.rec-btn.recording {
+      animation: pulseRec 1.2s infinite;
+      background: #b91c1c;
+    }
+    @keyframes pulseRec {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    }
+    .rec-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #101215;
+      padding: 3px 6px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
     }
     .audio-check {
       display: flex;
@@ -109,17 +124,16 @@
       gap: 4px;
       font-size: 11.5px;
       color: #fde68a;
-      background: #1e1b18;
+      background: #1c1917;
       border: 1px solid #78350f;
       padding: 4px 8px;
       border-radius: 6px;
       cursor: pointer;
-      user-select: none;
     }
-    /* Audio Timeline Bar */
+    /* Audio Timeline Strip */
     .audio-bar {
-      height: 42px;
-      background: #12151b;
+      height: 40px;
+      background: #13161b;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -128,8 +142,8 @@
       font-size: 12px;
     }
     .audio-bar audio {
-      height: 28px;
-      max-width: 250px;
+      height: 26px;
+      max-width: 240px;
     }
     .cue-btn {
       background: #1e3a8a;
@@ -155,14 +169,11 @@
       font-size: 11px;
       cursor: pointer;
     }
-    .cue-tag:hover { border-color: #f59e0b; }
-
-    /* Workspace Split */
     main {
       flex: 1;
       display: grid;
-      grid-template-columns: 41% 59%;
-      height: calc(100vh - 92px);
+      grid-template-columns: 42% 58%;
+      height: calc(100vh - 90px);
     }
     .left-pane {
       display: flex;
@@ -170,7 +181,6 @@
       border-right: 1px solid var(--border);
       background: var(--bg-dark);
       height: 100%;
-      contain: strict;
     }
     .editor-box {
       flex: 1;
@@ -182,7 +192,7 @@
     .snippet-box {
       height: 36%;
       border-top: 2px solid var(--border);
-      background: #14171d;
+      background: #14171c;
       display: flex;
       flex-direction: column;
       padding: 10px;
@@ -195,11 +205,12 @@
       font-size: 12px;
       color: var(--muted);
       font-weight: 600;
+      gap: 6px;
     }
     textarea {
       flex: 1;
       width: 100%;
-      background: #090b0e;
+      background: #0b0d10;
       color: #a5f3fc;
       border: 1px solid var(--border);
       border-radius: 6px;
@@ -214,17 +225,15 @@
     }
     textarea:focus { border-color: var(--accent); }
     .snippet-box textarea { color: #fde68a; }
-
-    /* Right 1920x1080 Preview Pane */
     .right-pane {
       display: flex;
       flex-direction: column;
-      background: #060709;
+      background: #08090b;
       height: 100%;
     }
     .preview-toolbar {
       height: 34px;
-      background: #14171d;
+      background: #14171c;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -238,9 +247,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 14px;
+      padding: 16px;
       overflow: hidden;
-      background-image: radial-gradient(#242933 1px, transparent 1px);
+      background-image: radial-gradient(#262b33 1px, transparent 1px);
       background-size: 18px 18px;
     }
     #stageScaler {
@@ -248,10 +257,8 @@
       overflow: hidden;
       border: 1px solid var(--border);
       border-radius: 4px;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8);
       background: #000;
-      will-change: transform;
-      transform: translateZ(0);
     }
     #previewFrame {
       width: 1920px;
@@ -260,7 +267,6 @@
       transform-origin: top left;
       display: block;
       background: #ffffff;
-      will-change: transform;
     }
     #toast {
       position: fixed;
@@ -276,6 +282,7 @@
       pointer-events: none;
       transition: opacity 0.25s;
       z-index: 999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
     }
     #toast.show { opacity: 1; }
   </style>
@@ -284,32 +291,43 @@
 
   <header>
     <div class="brand">
-      <a href="index.html" class="home-link">← Home</a>
-      <span>🚀 Single-File Ultra Studio</span>
+      <a href="index.html" class="home-btn">← Home</a>
+      <span>⚡ Pro Live HTML Coder</span>
       <span class="stats" id="sizeBadge">Lines: 0 | 0 KB</span>
     </div>
-
     <div class="actions">
-      <button onclick="copyPromptRule()" class="btn-ai" title="नई चैट में AI को देने के लिए नियम कॉपी करें">📋 AI Prompt</button>
-      <button id="undoBtn" onclick="undoMerge()" disabled title="पिछला मर्ज वापस लें">↩ Undo</button>
+      <button onclick="copyPromptRule()" style="background:#312e81; border-color:#4338ca; color:#c7d2fe;" title="नई चैट में AI को देने के लिए प्रोटोकॉल कॉपी करें">📋 AI Prompt</button>
+      <button id="undoBtn" onclick="undoMerge()" disabled title="पिछला बदलाव वापस लें">↩ Undo</button>
       <button onclick="loadFile()">📂 खोलें</button>
-      <input type="file" id="fileInput" accept=".html,.htm,.txt" hidden />
+      <input type="file" id="fileInput" accept=".html,.htm,.txt" style="display:none" />
       <button class="primary" onclick="renderPreview(true)">▶ Run</button>
 
-      <label class="audio-check" title="एक्सपोर्ट होने वाली HTML फाइल के अंदर ही ऑडियो को पैक कर देगा">
-        <input type="checkbox" id="embedAudioCheck" checked /> 🔊 Audio साथ जोड़ें
+      <label class="audio-check" title="एक्सपोर्ट फाइल में ऑडियो साथ जोड़ें">
+        <input type="checkbox" id="embedAudioCheck" checked /> 🔊 Audio
       </label>
-      <button class="export-btn" onclick="downloadCode()">💾 Export 1080p HTML</button>
+      <button onclick="downloadCode()" title="1920x1080 लॉक + मोबाइल ऑटो-फुलस्क्रीन के साथ डाउनलोड करें">💾 Export</button>
+
+      <div class="rec-group">
+        <select id="recRes">
+          <option value="1080">1080p</option>
+          <option value="720">720p</option>
+        </select>
+        <select id="recFps">
+          <option value="60">60 FPS</option>
+          <option value="30">30 FPS</option>
+        </select>
+        <button id="recordBtn" class="rec-btn" onclick="toggleRecording()">🔴 Record</button>
+      </div>
     </div>
   </header>
 
-  <!-- Audio Timeline & Cue Marker Bar -->
+  <!-- Audio Timeline & Cue Marker Strip -->
   <div class="audio-bar">
     <button onclick="document.getElementById('audioInput').click()">🎵 Audio लोड करें</button>
-    <input type="file" id="audioInput" accept="audio/*" hidden />
+    <input type="file" id="audioInput" accept="audio/*" style="display:none" />
     <audio id="audioPlayer" controls></audio>
-    <button class="cue-btn" onclick="markAudioCue()">📍 Mark Cue Time</button>
-    <div class="cue-list" id="cueList">ऑडियो फाइल लोड करें — समय और सीन मार्क करने के लिए</div>
+    <button class="cue-btn" onclick="markAudioCue()">📍 Mark Cue</button>
+    <div class="cue-list" id="cueList">ऑडियो फाइल लोड करके समय और सीन मार्क करें</div>
   </div>
 
   <main>
@@ -324,23 +342,22 @@
 
       <div class="snippet-box">
         <div class="box-header">
-          <span>2. नया हिस्सा या सीन कोड यहाँ पेस्ट करें</span>
+          <span>2. AI से मिला नया कोड यहाँ पेस्ट करें</span>
           <div style="display:flex; gap:6px; align-items:center;">
-            <select id="sceneSelector" style="max-width:160px;">
+            <select id="sceneSelector" title="ऑटो-डिटेक्टेड सीन या टारगेट" style="max-width:165px;">
               <option value="auto">🧠 Auto-Intelligence</option>
-              <option value="cursor">📍 At Cursor Position</option>
-              <option value="bodyEnd">⬇ End of &lt;/body&gt;</option>
             </select>
             <button class="ai-merge-btn" onclick="intelligentMerge()">✨ Auto-Merge</button>
           </div>
         </div>
-        <textarea id="snippetCode" spellcheck="false" placeholder="AI से मिला नया Scene, SVG, CSS या JS यहाँ पेस्ट करें और 'Auto-Merge' दबाएं..."></textarea>
+        <textarea id="snippetCode" spellcheck="false" placeholder="AI द्वारा दिया गया कोई भी नया Scene, SVG, CSS या Update कोड यहाँ पेस्ट करें और 'Auto-Merge' दबाएं..."></textarea>
       </div>
     </div>
 
     <div class="right-pane">
       <div class="preview-toolbar">
         <span id="statusText">1920×1080 Strict Pixel-Lock Ready</span>
+        <span id="recTimer" style="color:#ef4444; font-weight:700; display:none;">● REC 00:00</span>
         <span id="renderTime">Scale: 100% | 0 ms</span>
       </div>
       <div class="canvas-wrapper" id="canvasWrapper">
@@ -364,6 +381,8 @@
     const statusText = document.getElementById('statusText');
     const undoBtn = document.getElementById('undoBtn');
     const sceneSelector = document.getElementById('sceneSelector');
+    const recordBtn = document.getElementById('recordBtn');
+    const recTimerEl = document.getElementById('recTimer');
     const audioPlayer = document.getElementById('audioPlayer');
     const cueListEl = document.getElementById('cueList');
 
@@ -372,13 +391,20 @@
     let backupStack = [];
     let currentScale = 1;
     let lastRenderMs = 0;
+
     let audioCues = [];
     let loadedAudioBase64 = null;
-    let loadedAudioName = "";
 
-    // Strict 1920x1080 Viewport Scaler
+    let isRecording = false;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let captureStream = null;
+    let animFrameId = null;
+    let recInterval = null;
+    let recStartTime = 0;
+
     function updateStageScale() {
-      const pad = 28;
+      const pad = 32;
       const availW = canvasWrapper.clientWidth - pad;
       const availH = canvasWrapper.clientHeight - pad;
       if (availW <= 0 || availH <= 0) return;
@@ -393,19 +419,18 @@
     window.addEventListener('resize', updateStageScale);
     updateStageScale();
 
-    // Load Audio File + Convert to Base64 for Optional Bundled Export
+    // Audio Timeline & Cue Marker
     document.getElementById('audioInput').addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      loadedAudioName = file.name;
       audioPlayer.src = URL.createObjectURL(file);
       audioCues = [];
-      cueListEl.innerHTML = '<span>ऑडियो तैयार है — प्ले करके "Mark Cue Time" दबाएं</span>';
+      cueListEl.innerHTML = '<span>ऑडियो तैयार है — प्ले करके "Mark Cue" दबाएं</span>';
 
       const reader = new FileReader();
       reader.onload = (ev) => {
         loadedAudioBase64 = ev.target.result;
-        showToast(`ऑडियो लोड हो गया (${file.name}) — एक्सपोर्ट के लिए तैयार!`);
+        showToast(`ऑडियो लोड हो गया (${file.name})`);
       };
       reader.readAsDataURL(file);
     });
@@ -417,15 +442,11 @@
       }
       const t = audioPlayer.currentTime.toFixed(1);
       audioCues.push(t);
-      renderCues();
+      cueListEl.innerHTML = audioCues.map((sec, idx) =>
+        `<span class="cue-tag" onclick="jumpToCue(${sec})">Scene ${idx + 1}: ${sec}s</span>`
+      ).join('');
       navigator.clipboard.writeText(`मेरे Pro Live HTML Coder प्रोजेक्ट में ठीक ${t}s पर नया एनिमेशन/सीन जोड़ने का कोड दो।`);
       showToast(`Cue मार्क: ${t}s (AI प्रॉम्प्ट कॉपी हो गया)`);
-    }
-
-    function renderCues() {
-      cueListEl.innerHTML = audioCues.map((sec, idx) =>
-        `<span class="cue-tag" onclick="jumpToCue(${sec})" title="क्लिक करके इस सेकंड पर जाएं और प्रॉम्प्ट कॉपी करें">Scene ${idx + 1}: ${sec}s</span>`
-      ).join('');
     }
 
     function jumpToCue(sec) {
@@ -450,7 +471,7 @@
         const idMatch = line.match(/id=["']([a-zA-Z0-9_-]+)["']/i);
         if (idMatch) {
           const idName = idMatch[1];
-          if (!foundIds.has(idName) && foundIds.size < 45) {
+          if (!foundIds.has(idName) && foundIds.size < 40) {
             foundIds.add(idName);
             const opt = document.createElement('option');
             opt.value = `id:${idName}`;
@@ -495,7 +516,7 @@
       previewFrame.onload = () => {
         lastRenderMs = Math.round(performance.now() - t0);
         updateStageScale();
-        statusText.textContent = "Pixel-Locked 1920×1080 Active";
+        if (!isRecording) statusText.textContent = "Pixel-Locked 1920×1080 Active";
       };
     }
 
@@ -545,7 +566,7 @@
         return;
       }
 
-      if (backupStack.length >= 10) backupStack.shift();
+      if (backupStack.length >= 8) backupStack.shift();
       backupStack.push(baseCode);
       undoBtn.disabled = false;
 
@@ -577,9 +598,11 @@
 
       if (extractedStyles.trim()) {
         const headCloseIdx = baseCode.toLowerCase().lastIndexOf('</head>');
-        baseCode = headCloseIdx !== -1
-          ? baseCode.slice(0, headCloseIdx) + `\n<!-- Merged CSS -->${extractedStyles}\n` + baseCode.slice(headCloseIdx)
-          : extractedStyles + "\n" + baseCode;
+        if (headCloseIdx !== -1) {
+          baseCode = baseCode.slice(0, headCloseIdx) + `\n<!-- AI Merged CSS -->${extractedStyles}\n` + baseCode.slice(headCloseIdx);
+        } else {
+          baseCode = extractedStyles + "\n" + baseCode;
+        }
       }
 
       let placementInfo = "Body End";
@@ -588,17 +611,19 @@
         let wasInserted = false;
 
         if (replaceMatch) {
-          const range = findElementRangeById(baseCode, replaceMatch[1]);
+          const targetId = replaceMatch[1];
+          const range = findElementRangeById(baseCode, targetId);
           if (range) {
             baseCode = baseCode.slice(0, range.start) + bodyVisuals + baseCode.slice(range.end);
-            placementInfo = `Replaced #${replaceMatch[1]}`;
+            placementInfo = `Replaced #${targetId}`;
             wasInserted = true;
           }
         } else if (insertAfterMatch) {
-          const range = findElementRangeById(baseCode, insertAfterMatch[1]);
+          const targetId = insertAfterMatch[1];
+          const range = findElementRangeById(baseCode, targetId);
           if (range) {
             baseCode = baseCode.slice(0, range.end) + `\n${bodyVisuals}\n` + baseCode.slice(range.end);
-            placementInfo = `After #${insertAfterMatch[1]}`;
+            placementInfo = `After #${targetId}`;
             wasInserted = true;
           }
         } else if (insertInsideMatch || manualMode.startsWith('id:')) {
@@ -619,10 +644,11 @@
         } else {
           const sceneHint = rawSnippet.match(/(scene[-_]?\d+|stage|map[-_]?container|timeline)/i);
           if (sceneHint) {
-            const range = findElementRangeById(baseCode, sceneHint[1]);
+            const guessedId = sceneHint[1];
+            const range = findElementRangeById(baseCode, guessedId);
             if (range) {
               baseCode = baseCode.slice(0, range.contentEnd) + `\n${bodyVisuals}\n` + baseCode.slice(range.contentEnd);
-              placementInfo = `Auto-Matched #${sceneHint[1]}`;
+              placementInfo = `Auto-Matched #${guessedId}`;
               wasInserted = true;
             }
           }
@@ -630,17 +656,21 @@
 
         if (!wasInserted) {
           const bodyCloseIdx = baseCode.toLowerCase().lastIndexOf('</body>');
-          baseCode = bodyCloseIdx !== -1
-            ? baseCode.slice(0, bodyCloseIdx) + `\n${bodyVisuals}\n` + baseCode.slice(bodyCloseIdx)
-            : baseCode + `\n${bodyVisuals}`;
+          if (bodyCloseIdx !== -1) {
+            baseCode = baseCode.slice(0, bodyCloseIdx) + `\n${bodyVisuals}\n` + baseCode.slice(bodyCloseIdx);
+          } else {
+            baseCode += `\n${bodyVisuals}`;
+          }
         }
       }
 
       if (extractedScripts.trim()) {
         const bodyCloseIdx = baseCode.toLowerCase().lastIndexOf('</body>');
-        baseCode = bodyCloseIdx !== -1
-          ? baseCode.slice(0, bodyCloseIdx) + `\n<!-- Merged Script -->${extractedScripts}\n` + baseCode.slice(bodyCloseIdx)
-          : baseCode + `\n${extractedScripts}`;
+        if (bodyCloseIdx !== -1) {
+          baseCode = baseCode.slice(0, bodyCloseIdx) + `\n<!-- AI Merged Script -->${extractedScripts}\n` + baseCode.slice(bodyCloseIdx);
+        } else {
+          baseCode += `\n${extractedScripts}`;
+        }
       }
 
       mainCodeEl.value = baseCode;
@@ -655,22 +685,20 @@
       showToast("AI प्रोटोकॉल कॉपी हो गया! नई चैट में इसे पेस्ट कर दें।");
     }
 
-    // Export with 1920x1080 Lock + Chrome Searchbar Hide Fullscreen + Optional Embedded Audio
+    // EXPORT WITH 1920x1080 LOCK + MOBILE AUTO-FULLSCREEN & OPTIONAL BUNDLED AUDIO
     function downloadCode() {
       let finalCode = mainCodeEl.value;
       if (!finalCode.trim()) return;
 
       const includeAudio = document.getElementById('embedAudioCheck').checked && loadedAudioBase64;
-      let audioHtmlTag = "";
-      let audioPlayHook = "";
+      let audioTag = "";
+      let audioTrigger = "";
 
       if (includeAudio) {
-        audioHtmlTag = `\n<audio id="bundledMasterAudio" src="${loadedAudioBase64}" preload="auto"></audio>\n`;
-        audioPlayHook = `
+        audioTag = `\n<audio id="bundledMasterAudio" src="${loadedAudioBase64}" preload="auto"></audio>\n`;
+        audioTrigger = `
           const aud = document.getElementById('bundledMasterAudio');
-          if (aud && aud.paused) {
-            aud.play().catch(() => {});
-          }
+          if (aud && aud.paused) { aud.play().catch(() => {}); }
         `;
       }
 
@@ -704,9 +732,9 @@
   }
 </style>`;
 
-        const lockScript = `${audioHtmlTag}
+        const lockScript = `${audioTag}
 <script>
-  (function lockExact1080pChromeClean() {
+  (function lockExact1080pMobileReady() {
     function fitExactCanvas() {
       const vw = window.visualViewport ? window.visualViewport.width : window.innerWidth;
       const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -714,11 +742,12 @@
       document.body.style.transform = 'scale(' + scale + ')';
     }
     window.addEventListener('resize', fitExactCanvas);
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', fitExactCanvas);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', fitExactCanvas);
+    }
     fitExactCanvas();
 
-    // Chrome में खुलने पर पहली बार क्लिक/टैप करते ही ऊपर का सर्च बार हटाकर 100% Fullscreen करना व ऑडियो चलाना
-    function activateCleanFullscreenAndAudio() {
+    function enterMobileFullscreen() {
       const el = document.documentElement;
       if (!document.fullscreenElement) {
         const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
@@ -727,13 +756,13 @@
             if (screen.orientation && screen.orientation.lock) {
               screen.orientation.lock('landscape').catch(() => {});
             }
-            setTimeout(fitExactCanvas, 120);
+            setTimeout(fitExactCanvas, 150);
           }).catch(() => {});
         }
       }
-      ${audioPlayHook}
+      ${audioTrigger}
     }
-    document.addEventListener('click', activateCleanFullscreenAndAudio, { capture: true });
+    document.addEventListener('click', enterMobileFullscreen, { capture: true });
   })();
 <\/script>`;
 
@@ -747,9 +776,176 @@
       const blob = new Blob([finalCode], { type: 'text/html' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = includeAudio ? 'final_1080p_with_audio.html' : 'final_1080p_video.html';
+      a.download = includeAudio ? 'pro_1080p_with_audio.html' : 'pro_1920x1080_mobile_fullscreen.html';
       a.click();
-      showToast(includeAudio ? "ऑडियो सहित 1080p HTML फाइल डाउनलोड हो गई!" : "1080p HTML फाइल डाउनलोड हो गई!");
+      showToast(includeAudio ? "ऑडियो सहित 1080p फाइल एक्सपोर्ट हो गई!" : "मोबाइल फुलस्क्रीन + 1080p लॉक फाइल एक्सपोर्ट हो गई!");
+    }
+
+    async function fixWebmDuration(blob, durationMs) {
+      try {
+        const buffer = await blob.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        let infoPos = -1;
+        for (let i = 0; i < Math.min(bytes.length, 4096); i++) {
+          if (bytes[i] === 0x15 && bytes[i+1] === 0x49 && bytes[i+2] === 0xA9 && bytes[i+3] === 0x66) {
+            infoPos = i;
+            break;
+          }
+        }
+        if (infoPos === -1) return blob;
+
+        for (let i = infoPos; i < Math.min(bytes.length, infoPos + 200); i++) {
+          if (bytes[i] === 0x2A && bytes[i+1] === 0xD7 && bytes[i+2] === 0xB1) {
+            const scaleLen = bytes[i+3] & 0x7F;
+            const insertAt = i + 4 + scaleLen;
+
+            const durElem = new Uint8Array(11);
+            durElem[0] = 0x44;
+            durElem[1] = 0x89;
+            durElem[2] = 0x88;
+            new DataView(durElem.buffer).setFloat64(3, durationMs, false);
+
+            const combined = new Uint8Array(bytes.length + 11);
+            combined.set(bytes.slice(0, insertAt), 0);
+            combined.set(durElem, insertAt);
+            combined.set(bytes.slice(insertAt), insertAt + 11);
+
+            const infoSizeByte = combined[infoPos + 4];
+            if ((infoSizeByte & 0x80) !== 0 && (infoSizeByte & 0x7F) + 11 < 127) {
+              combined[infoPos + 4] = infoSizeByte + 11;
+            }
+            return new Blob([combined], { type: 'video/webm' });
+          }
+        }
+        return blob;
+      } catch (e) {
+        return blob;
+      }
+    }
+
+    async function toggleRecording() {
+      if (isRecording) { stopRecording(); return; }
+
+      const resHeight = parseInt(document.getElementById('recRes').value, 10);
+      const targetFps = parseInt(document.getElementById('recFps').value, 10);
+      const outWidth = resHeight === 1080 ? 1920 : 1280;
+      const outHeight = resHeight === 1080 ? 1080 : 720;
+
+      try {
+        captureStream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            displaySurface: "browser",
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+            frameRate: { ideal: targetFps, max: targetFps }
+          },
+          audio: true,
+          preferCurrentTab: true
+        });
+
+        const videoTrack = captureStream.getVideoTracks()[0];
+        const hiddenVideo = document.createElement('video');
+        hiddenVideo.srcObject = captureStream;
+        hiddenVideo.muted = true;
+        await hiddenVideo.play();
+
+        const cropCanvas = document.createElement('canvas');
+        cropCanvas.width = outWidth;
+        cropCanvas.height = outHeight;
+        const ctx = cropCanvas.getContext('2d', { alpha: false, desynchronized: true });
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        renderPreview(true);
+
+        function drawCroppedFrame() {
+          if (!isRecording) return;
+          const rect = stageScaler.getBoundingClientRect();
+          const dpr = window.devicePixelRatio || 1;
+          const scaleX = hiddenVideo.videoWidth / (window.innerWidth * dpr) * dpr;
+          const scaleY = hiddenVideo.videoHeight / (window.innerHeight * dpr) * dpr;
+
+          const sx = Math.round(rect.left * scaleX);
+          const sy = Math.round(rect.top * scaleY);
+          const sw = Math.round(rect.width * scaleX);
+          const sh = Math.round(rect.height * scaleY);
+
+          if (sw > 0 && sh > 0) {
+            ctx.drawImage(hiddenVideo, sx, sy, sw, sh, 0, 0, outWidth, outHeight);
+          }
+          animFrameId = requestAnimationFrame(drawCroppedFrame);
+        }
+
+        isRecording = true;
+        recStartTime = performance.now();
+        drawCroppedFrame();
+
+        const canvasStream = cropCanvas.captureStream(targetFps);
+        const audioTracks = captureStream.getAudioTracks();
+        if (audioTracks.length > 0) canvasStream.addTrack(audioTracks[0]);
+
+        let mimeType = 'video/webm';
+        if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+          mimeType = 'video/webm;codecs=vp9';
+        } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+          mimeType = 'video/webm;codecs=vp8';
+        }
+
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(canvasStream, {
+          mimeType: mimeType,
+          videoBitsPerSecond: resHeight === 1080 ? 16000000 : 8000000
+        });
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          const totalDurationMs = Math.max(1000, performance.now() - recStartTime);
+          const rawBlob = new Blob(recordedChunks, { type: 'video/webm' });
+          const fixedBlob = await fixWebmDuration(rawBlob, totalDurationMs);
+
+          const url = URL.createObjectURL(fixedBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `HD_stage_${resHeight}p_${targetFps}fps.webm`;
+          a.click();
+          URL.revokeObjectURL(url);
+          showToast(`HD वीडियो तैयार (${Math.round(totalDurationMs / 1000)}s • ${resHeight}p)!`);
+        };
+
+        videoTrack.onended = () => { if (isRecording) stopRecording(); };
+        mediaRecorder.start(100);
+
+        recordBtn.textContent = "⏹ Stop";
+        recordBtn.classList.add('recording');
+        statusText.textContent = `Recording HD ${resHeight}p @ ${targetFps} FPS...`;
+        recTimerEl.style.display = "inline";
+        let sec = 0;
+        recTimerEl.textContent = "● REC 00:00";
+        recInterval = setInterval(() => {
+          sec++;
+          recTimerEl.textContent = `● REC ${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+        }, 1000);
+
+      } catch (err) {
+        showToast("रिकॉर्डिंग रद्द कर दी गई।");
+        isRecording = false;
+      }
+    }
+
+    function stopRecording() {
+      isRecording = false;
+      cancelAnimationFrame(animFrameId);
+      clearInterval(recInterval);
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      if (captureStream) captureStream.getTracks().forEach(track => track.stop());
+
+      recordBtn.textContent = "🔴 Record";
+      recordBtn.classList.remove('recording');
+      recTimerEl.style.display = "none";
+      statusText.textContent = "Pixel-Locked 1920×1080 Active";
     }
 
     function undoMerge() {
