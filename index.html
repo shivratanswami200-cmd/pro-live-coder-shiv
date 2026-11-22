@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro Live HTML Coder — Studio Hub</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 50% 35%, #162238 0%, #090d16 70%, #05070c 100%);
+      color: #f8fafc;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .hub-container {
+      max-width: 920px;
+      width: 100%;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+    h1 {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, #ffffff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p.subtitle {
+      color: #94a3b8;
+      font-size: 16px;
+      margin-bottom: 44px;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .studio-btn {
+      text-decoration: none;
+      background: rgba(23, 28, 38, 0.85);
+      border: 2px solid #2b3445;
+      border-radius: 20px;
+      padding: 32px 28px;
+      text-align: left;
+      color: #f8fafc;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    }
+    .studio-btn:hover {
+      transform: translateY(-6px);
+      border-color: #10b981;
+      background: rgba(28, 36, 50, 0.95);
+      box-shadow: 0 20px 50px rgba(16, 185, 129, 0.2);
+    }
+    .studio-btn.multi:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 20px 50px rgba(59, 130, 246, 0.2);
+    }
+    .icon-box {
+      font-size: 38px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+    .card-desc {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.55;
+      margin-bottom: 24px;
+    }
+    .launch-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #10b981;
+    }
+    .studio-btn.multi .launch-tag {
+      color: #60a5fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="hub-container">
+    <div class="badge">⚡ 1920×1080 STRICT PIXEL-LOCK ENGINE</div>
+    <h1>Pro Live HTML Coder</h1>
+    <p class="subtitle">अपना पसंदीदा स्टूडियो मोड चुनें — दोनों में 1920×1080 फिक्स लॉक और ऑडियो सिंक उपलब्ध है</p>
+
+    <div class="cards-grid">
+      <!-- Button 1: Single-File Ultra Power Studio -->
+      <a href="single.html" class="studio-btn">
+        <div>
+          <div class="icon-box">🚀</div>
+          <div class="card-title">Single-Code HTML Studio</div>
+          <div class="card-desc">
+            सबसे तेज़ और अल्ट्रा-पावरफुल सिंगल-फाइल इंजन। इसमें 15,000+ लाइंस सपोर्ट, ऑडियो टाइमलाइन Cue-Marker, और <b>ऑडियो के साथ एक्सपोर्ट</b> करने का विकल्प मौजूद है।
+          </div>
+        </div>
+        <div class="launch-tag">सिंगल-कोड स्टूडियो खोलें →</div>
+      </a>
+
+      <!-- Button 2: 3-File Modular Studio -->
+      <a href="multi.html" class="studio-btn multi">
+        <div>
+          <div class="icon-box">🧩</div>
+          <div class="card-title">Three-Code Files Studio</div>
+          <div class="card-desc">
+            मॉड्यूलर 3-फाइल आर्किटेक्चर (HTML + CSS + Engine.js)। अलग-अलग फाइलों पर आधारित वर्जन को चलाने और टेस्ट करने के लिए।
+          </div>
+        </div>
+        <div class="launch-tag">थ्री-कोड फाइल्स खोलें →</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
