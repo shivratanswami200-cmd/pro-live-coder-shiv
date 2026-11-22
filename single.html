@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Single-File Ultra Live HTML Coder (1920×1080 + Audio Export)</title>
+  <style>
+    :root {
+      --bg-dark: #0e1014;
+      --panel-bg: #161920;
+      --border: #272c36;
+      --accent: #3b82f6;
+      --success: #10b981;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      height: 50px;
+      background: var(--panel-bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      gap: 8px;
+    }
+    .brand {
+      font-weight: 800;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+    }
+    .home-link {
+      text-decoration: none;
+      background: #222730;
+      color: #93c5fd;
+      border: 1px solid #334155;
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .home-link:hover { background: #2d3440; }
+    .stats {
+      font-size: 11px;
+      color: #93c5fd;
+      background: #0f172a;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #1e3a8a;
+      font-family: monospace;
+    }
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button, select {
+      background: #222730;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    button:hover { background: #2e3542; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+    button.export-btn {
+      background: #f59e0b;
+      border-color: #d97706;
+      color: #111827;
+      font-weight: 800;
+    }
+    button.btn-ai {
+      background: #312e81;
+      border-color: #4338ca;
+      color: #c7d2fe;
+    }
+    button.ai-merge-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: #032215;
+      font-weight: 800;
+      padding: 5px 12px;
+    }
+    .audio-check {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11.5px;
+      color: #fde68a;
+      background: #1e1b18;
+      border: 1px solid #78350f;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    /* Audio Timeline Bar */
+    .audio-bar {
+      height: 42px;
+      background: #12151b;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 10px;
+      font-size: 12px;
+    }
+    .audio-bar audio {
+      height: 28px;
+      max-width: 250px;
+    }
+    .cue-btn {
+      background: #1e3a8a;
+      border-color: #2563eb;
+      color: #dbeafe;
+      font-weight: 600;
+    }
+    .cue-list {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .cue-tag {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #fde68a;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .cue-tag:hover { border-color: #f59e0b; }
+
+    /* Workspace Split */
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 41% 59%;
+      height: calc(100vh - 92px);
+    }
+    .left-pane {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      background: var(--bg-dark);
+      height: 100%;
+      contain: strict;
+    }
+    .editor-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      min-height: 0;
+    }
+    .snippet-box {
+      height: 36%;
+      border-top: 2px solid var(--border);
+      background: #14171d;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+    }
+    .box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    textarea {
+      flex: 1;
+      width: 100%;
+      background: #090b0e;
+      color: #a5f3fc;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      font-family: Consolas, Monaco, 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      resize: none;
+      outline: none;
+      white-space: pre;
+      overflow: auto;
+    }
+    textarea:focus { border-color: var(--accent); }
+    .snippet-box textarea { color: #fde68a; }
+
+    /* Right 1920x1080 Preview Pane */
+    .right-pane {
+      display: flex;
+      flex-direction: column;
+      background: #060709;
+      height: 100%;
+    }
+    .preview-toolbar {
+      height: 34px;
+      background: #14171d;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .canvas-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      overflow: hidden;
+      background-image: radial-gradient(#242933 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    #stageScaler {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
+      background: #000;
+      will-change: transform;
+      transform: translateZ(0);
+    }
+    #previewFrame {
+      width: 1920px;
+      height: 1080px;
+      border: none;
+      transform-origin: top left;
+      display: block;
+      background: #ffffff;
+      will-change: transform;
+    }
+    #toast {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: #10b981;
+      color: #032215;
+      padding: 9px 15px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      z-index: 999;
+    }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <a href="index.html" class="home-link">← Home</a>
+      <span>🚀 Single-File Ultra Studio</span>
+      <span class="stats" id="sizeBadge">Lines: 0 | 0 KB</span>
+    </div>
+
+    <div class="actions">
+      <button onclick="copyPromptRule()" class="btn-ai" title="नई चैट में AI को देने के लिए नियम कॉपी करें">📋 AI Prompt</button>
+      <button id="undoBtn" onclick="undoMerge()" disabled title="पिछला मर्ज वापस लें">↩ Undo</button>
+      <button onclick="loadFile()">📂 खोलें</button>
+      <input type="file" id="fileInput" accept=".html,.htm,.txt" hidden />
+      <button class="primary" onclick="renderPreview(true)">▶ Run</button>
+
+      <label class="audio-check" title="एक्सपोर्ट होने वाली HTML फाइल के अंदर ही ऑडियो को पैक कर देगा">
+        <input type="checkbox" id="embedAudioCheck" checked /> 🔊 Audio साथ जोड़ें
+      </label>
+      <button class="export-btn" onclick="downloadCode()">💾 Export 1080p HTML</button>
+    </div>
+  </header>
+
+  <!-- Audio Timeline & Cue Marker Bar -->
+  <div class="audio-bar">
+    <button onclick="document.getElementById('audioInput').click()">🎵 Audio लोड करें</button>
+    <input type="file" id="audioInput" accept="audio/*" hidden />
+    <audio id="audioPlayer" controls></audio>
+    <button class="cue-btn" onclick="markAudioCue()">📍 Mark Cue Time</button>
+    <div class="cue-list" id="cueList">ऑडियो फाइल लोड करें — समय और सीन मार्क करने के लिए</div>
+  </div>
+
+  <main>
+    <div class="left-pane">
+      <div class="editor-box">
+        <div class="box-header">
+          <span>1. मुख्य HTML प्रोजेक्ट (1920×1080 लॉक • 15,000+ लाइंस)</span>
+          <button onclick="clearMain()" style="padding:2px 8px; font-size:11px;">Clear</button>
+        </div>
+        <textarea id="mainCode" spellcheck="false" placeholder="यहाँ अपना मुख्य HTML कोड पेस्ट करें..."></textarea>
+      </div>
+
+      <div class="snippet-box">
+        <div class="box-header">
+          <span>2. नया हिस्सा या सीन कोड यहाँ पेस्ट करें</span>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <select id="sceneSelector" style="max-width:160px;">
+              <option value="auto">🧠 Auto-Intelligence</option>
+              <option value="cursor">📍 At Cursor Position</option>
+              <option value="bodyEnd">⬇ End of &lt;/body&gt;</option>
+            </select>
+            <button class="ai-merge-btn" onclick="intelligentMerge()">✨ Auto-Merge</button>
+          </div>
+        </div>
+        <textarea id="snippetCode" spellcheck="false" placeholder="AI से मिला नया Scene, SVG, CSS या JS यहाँ पेस्ट करें और 'Auto-Merge' दबाएं..."></textarea>
+      </div>
+    </div>
+
+    <div class="right-pane">
+      <div class="preview-toolbar">
+        <span id="statusText">1920×1080 Strict Pixel-Lock Ready</span>
+        <span id="renderTime">Scale: 100% | 0 ms</span>
+      </div>
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <div id="stageScaler">
+          <iframe id="previewFrame" sandbox="allow-scripts allow-same-origin allow-modals"></iframe>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast">सफलतापूर्वक मर्ज हो गया!</div>
+
+  <script>
+    const mainCodeEl = document.getElementById('mainCode');
+    const snippetCodeEl = document.getElementById('snippetCode');
+    const previewFrame = document.getElementById('previewFrame');
+    const stageScaler = document.getElementById('stageScaler');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const sizeBadge = document.getElementById('sizeBadge');
+    const renderTimeEl = document.getElementById('renderTime');
+    const statusText = document.getElementById('statusText');
+    const undoBtn = document.getElementById('undoBtn');
+    const sceneSelector = document.getElementById('sceneSelector');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const cueListEl = document.getElementById('cueList');
+
+    let currentBlobUrl = null;
+    let debounceTimer = null;
+    let backupStack = [];
+    let currentScale = 1;
+    let lastRenderMs = 0;
+    let audioCues = [];
+    let loadedAudioBase64 = null;
+    let loadedAudioName = "";
+
+    // Strict 1920x1080 Viewport Scaler
+    function updateStageScale() {
+      const pad = 28;
+      const availW = canvasWrapper.clientWidth - pad;
+      const availH = canvasWrapper.clientHeight - pad;
+      if (availW <= 0 || availH <= 0) return;
+
+      currentScale = Math.min(availW / 1920, availH / 1080);
+      stageScaler.style.width = Math.round(1920 * currentScale) + 'px';
+      stageScaler.style.height = Math.round(1080 * currentScale) + 'px';
+      previewFrame.style.transform = `scale(${currentScale})`;
+      renderTimeEl.textContent = `Scale: ${Math.round(currentScale * 100)}% | ${lastRenderMs} ms`;
+    }
+
+    window.addEventListener('resize', updateStageScale);
+    updateStageScale();
+
+    // Load Audio File + Convert to Base64 for Optional Bundled Export
+    document.getElementById('audioInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      loadedAudioName = file.name;
+      audioPlayer.src = URL.createObjectURL(file);
+      audioCues = [];
+      cueListEl.innerHTML = '<span>ऑडियो तैयार है — प्ले करके "Mark Cue Time" दबाएं</span>';
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        loadedAudioBase64 = ev.target.result;
+        showToast(`ऑडियो लोड हो गया (${file.name}) — एक्सपोर्ट के लिए तैयार!`);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function markAudioCue() {
+      if (!audioPlayer.src) {
+        showToast("पहले कोई ऑडियो फाइल लोड करें!");
+        return;
+      }
+      const t = audioPlayer.currentTime.toFixed(1);
+      audioCues.push(t);
+      renderCues();
+      navigator.clipboard.writeText(`मेरे Pro Live HTML Coder प्रोजेक्ट में ठीक ${t}s पर नया एनिमेशन/सीन जोड़ने का कोड दो।`);
+      showToast(`Cue मार्क: ${t}s (AI प्रॉम्प्ट कॉपी हो गया)`);
+    }
+
+    function renderCues() {
+      cueListEl.innerHTML = audioCues.map((sec, idx) =>
+        `<span class="cue-tag" onclick="jumpToCue(${sec})" title="क्लिक करके इस सेकंड पर जाएं और प्रॉम्प्ट कॉपी करें">Scene ${idx + 1}: ${sec}s</span>`
+      ).join('');
+    }
+
+    function jumpToCue(sec) {
+      audioPlayer.currentTime = parseFloat(sec);
+      navigator.clipboard.writeText(`मेरे Pro Live HTML Coder प्रोजेक्ट में ठीक ${sec}s पर नया एनिमेशन/सीन जोड़ने का कोड दो।`);
+      showToast(`${sec}s के लिए AI प्रॉम्प्ट कॉपी हो गया!`);
+    }
+
+    function scanScenes(code) {
+      const prevVal = sceneSelector.value;
+      sceneSelector.innerHTML = `
+        <option value="auto">🧠 Auto-Intelligence</option>
+        <option value="cursor">📍 At Cursor Position</option>
+        <option value="bodyEnd">⬇ End of &lt;/body&gt;</option>
+      `;
+
+      if (!code) return;
+      const lines = code.split('\n');
+      const foundIds = new Set();
+
+      lines.forEach((line, idx) => {
+        const idMatch = line.match(/id=["']([a-zA-Z0-9_-]+)["']/i);
+        if (idMatch) {
+          const idName = idMatch[1];
+          if (!foundIds.has(idName) && foundIds.size < 45) {
+            foundIds.add(idName);
+            const opt = document.createElement('option');
+            opt.value = `id:${idName}`;
+            opt.textContent = `#${idName} (Line ${idx + 1})`;
+            sceneSelector.appendChild(opt);
+          }
+        }
+      });
+
+      if (Array.from(sceneSelector.options).some(o => o.value === prevVal)) {
+        sceneSelector.value = prevVal;
+      }
+    }
+
+    function updateStats(code) {
+      const bytes = new Blob([code]).size;
+      const lineCount = code ? code.split('\n').length : 0;
+      const kb = (bytes / 1024).toFixed(1);
+      const mb = (bytes / (1024 * 1024)).toFixed(2);
+      const isHeavy = lineCount > 3000 || bytes > 200 * 1024;
+      const sizeStr = bytes > 1024 * 1024 ? `${mb} MB` : `${kb} KB`;
+      sizeBadge.textContent = `Lines: ${lineCount.toLocaleString()} | ${sizeStr}`;
+      return isHeavy;
+    }
+
+    function renderPreview(force = false) {
+      const code = mainCodeEl.value;
+      const isHeavy = updateStats(code);
+      scanScenes(code);
+
+      if (isHeavy && !force) {
+        statusText.textContent = "बड़ी फाइल — अपडेट देखने के लिए '▶ Run' दबाएं";
+        return;
+      }
+
+      const t0 = performance.now();
+      if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+      const blob = new Blob([code], { type: 'text/html' });
+      currentBlobUrl = URL.createObjectURL(blob);
+      previewFrame.src = currentBlobUrl;
+
+      previewFrame.onload = () => {
+        lastRenderMs = Math.round(performance.now() - t0);
+        updateStageScale();
+        statusText.textContent = "Pixel-Locked 1920×1080 Active";
+      };
+    }
+
+    mainCodeEl.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const isHeavy = updateStats(mainCodeEl.value);
+      if (!isHeavy) {
+        debounceTimer = setTimeout(() => renderPreview(false), 500);
+      }
+    });
+
+    function findElementRangeById(html, targetId) {
+      const openRegex = new RegExp(`<([a-zA-Z0-9-]+)[^>]*\\bid=["']${targetId}["'][^>]*>`, 'i');
+      const match = html.match(openRegex);
+      if (!match) return null;
+
+      const tagName = match[1].toLowerCase();
+      const startIdx = match.index;
+      const contentStartIdx = startIdx + match[0].length;
+
+      const tagRegex = new RegExp(`<(\\/?)${tagName}\\b[^>]*>`, 'gi');
+      tagRegex.lastIndex = contentStartIdx;
+      let depth = 1;
+      let m;
+      while ((m = tagRegex.exec(html)) !== null) {
+        if (m[1] === '/') depth--;
+        else if (!m[0].endsWith('/>')) depth++;
+
+        if (depth === 0) {
+          return {
+            start: startIdx,
+            contentStart: contentStartIdx,
+            contentEnd: m.index,
+            end: m.index + m[0].length
+          };
+        }
+      }
+      return { start: startIdx, contentStart: contentStartIdx, contentEnd: contentStartIdx, end: contentStartIdx };
+    }
+
+    function intelligentMerge() {
+      let baseCode = mainCodeEl.value;
+      const rawSnippet = snippetCodeEl.value.trim();
+
+      if (!rawSnippet) {
+        showToast("पहले नीचे वाले बॉक्स में कोड पेस्ट करें!");
+        return;
+      }
+
+      if (backupStack.length >= 10) backupStack.shift();
+      backupStack.push(baseCode);
+      undoBtn.disabled = false;
+
+      if (!baseCode.trim()) {
+        baseCode = `<!DOCTYPE html>\n<html lang="hi">\n<head>\n  <meta charset="UTF-8">\n</head>\n<body>\n  <div id="stage"></div>\n</body>\n</html>`;
+      }
+
+      const replaceMatch = rawSnippet.match(/<!--\s*REPLACE_ID:\s*([a-zA-Z0-9_-]+)\s*-->/i);
+      const insertInsideMatch = rawSnippet.match(/<!--\s*INSERT_SCENE:\s*([a-zA-Z0-9_-]+)\s*-->/i);
+      const insertAfterMatch = rawSnippet.match(/<!--\s*INSERT_AFTER_ID:\s*([a-zA-Z0-9_-]+)\s*-->/i);
+
+      const parser = new DOMParser();
+      const snippetDoc = parser.parseFromString(rawSnippet, 'text/html');
+
+      let extractedStyles = "";
+      snippetDoc.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
+        extractedStyles += "\n" + el.outerHTML;
+        el.remove();
+      });
+
+      let extractedScripts = "";
+      snippetDoc.querySelectorAll('script').forEach(el => {
+        extractedScripts += "\n" + el.outerHTML;
+        el.remove();
+      });
+
+      const headExtras = Array.from(snippetDoc.head.children).map(el => el.outerHTML).join("\n");
+      const bodyVisuals = [headExtras, snippetDoc.body.innerHTML.trim()].filter(Boolean).join("\n");
+
+      if (extractedStyles.trim()) {
+        const headCloseIdx = baseCode.toLowerCase().lastIndexOf('</head>');
+        baseCode = headCloseIdx !== -1
+          ? baseCode.slice(0, headCloseIdx) + `\n<!-- Merged CSS -->${extractedStyles}\n` + baseCode.slice(headCloseIdx)
+          : extractedStyles + "\n" + baseCode;
+      }
+
+      let placementInfo = "Body End";
+      if (bodyVisuals.trim()) {
+        const manualMode = sceneSelector.value;
+        let wasInserted = false;
+
+        if (replaceMatch) {
+          const range = findElementRangeById(baseCode, replaceMatch[1]);
+          if (range) {
+            baseCode = baseCode.slice(0, range.start) + bodyVisuals + baseCode.slice(range.end);
+            placementInfo = `Replaced #${replaceMatch[1]}`;
+            wasInserted = true;
+          }
+        } else if (insertAfterMatch) {
+          const range = findElementRangeById(baseCode, insertAfterMatch[1]);
+          if (range) {
+            baseCode = baseCode.slice(0, range.end) + `\n${bodyVisuals}\n` + baseCode.slice(range.end);
+            placementInfo = `After #${insertAfterMatch[1]}`;
+            wasInserted = true;
+          }
+        } else if (insertInsideMatch || manualMode.startsWith('id:')) {
+          const targetId = insertInsideMatch ? insertInsideMatch[1] : manualMode.replace('id:', '');
+          if (targetId.toLowerCase() !== 'body') {
+            const range = findElementRangeById(baseCode, targetId);
+            if (range) {
+              baseCode = baseCode.slice(0, range.contentEnd) + `\n${bodyVisuals}\n` + baseCode.slice(range.contentEnd);
+              placementInfo = `Inside #${targetId}`;
+              wasInserted = true;
+            }
+          }
+        } else if (manualMode === 'cursor') {
+          const cursorPos = mainCodeEl.selectionStart || baseCode.length;
+          baseCode = baseCode.slice(0, cursorPos) + `\n${bodyVisuals}\n` + baseCode.slice(cursorPos);
+          placementInfo = "At Cursor";
+          wasInserted = true;
+        } else {
+          const sceneHint = rawSnippet.match(/(scene[-_]?\d+|stage|map[-_]?container|timeline)/i);
+          if (sceneHint) {
+            const range = findElementRangeById(baseCode, sceneHint[1]);
+            if (range) {
+              baseCode = baseCode.slice(0, range.contentEnd) + `\n${bodyVisuals}\n` + baseCode.slice(range.contentEnd);
+              placementInfo = `Auto-Matched #${sceneHint[1]}`;
+              wasInserted = true;
+            }
+          }
+        }
+
+        if (!wasInserted) {
+          const bodyCloseIdx = baseCode.toLowerCase().lastIndexOf('</body>');
+          baseCode = bodyCloseIdx !== -1
+            ? baseCode.slice(0, bodyCloseIdx) + `\n${bodyVisuals}\n` + baseCode.slice(bodyCloseIdx)
+            : baseCode + `\n${bodyVisuals}`;
+        }
+      }
+
+      if (extractedScripts.trim()) {
+        const bodyCloseIdx = baseCode.toLowerCase().lastIndexOf('</body>');
+        baseCode = bodyCloseIdx !== -1
+          ? baseCode.slice(0, bodyCloseIdx) + `\n<!-- Merged Script -->${extractedScripts}\n` + baseCode.slice(bodyCloseIdx)
+          : baseCode + `\n${extractedScripts}`;
+      }
+
+      mainCodeEl.value = baseCode;
+      snippetCodeEl.value = "";
+      renderPreview(true);
+      showToast(`✨ स्मार्ट मर्ज सफल (${placementInfo})`);
+    }
+
+    function copyPromptRule() {
+      const ruleText = `मेरे पास "Pro Live HTML Coder" टूल है (1920x1080 Fixed Stage)। जब भी तुम मुझे नया HTML/CSS/SVG/JS कोड या कोई अपडेट दो, तो उसमें ये स्मार्ट मार्कर्स ज़रूर लगाना ताकि मेरा टूल उसे सही लाइन पर ऑटो-मर्ज कर सके:\n1. किसी सीन या कंटेनर के अंदर जोड़ने के लिए सबसे ऊपर लिखो: <!-- INSERT_SCENE: scene_id -->\n2. किसी पुराने हिस्से को बदलने के लिए लिखो: <!-- REPLACE_ID: target_id -->\n3. किसी एलिमेंट के ठीक नीचे जोड़ने के लिए लिखो: <!-- INSERT_AFTER_ID: target_id -->\nकोड हमेशा 1920x1080 फिक्स्ड कैनवास के हिसाब से देना।`;
+      navigator.clipboard.writeText(ruleText);
+      showToast("AI प्रोटोकॉल कॉपी हो गया! नई चैट में इसे पेस्ट कर दें।");
+    }
+
+    // Export with 1920x1080 Lock + Chrome Searchbar Hide Fullscreen + Optional Embedded Audio
+    function downloadCode() {
+      let finalCode = mainCodeEl.value;
+      if (!finalCode.trim()) return;
+
+      const includeAudio = document.getElementById('embedAudioCheck').checked && loadedAudioBase64;
+      let audioHtmlTag = "";
+      let audioPlayHook = "";
+
+      if (includeAudio) {
+        audioHtmlTag = `\n<audio id="bundledMasterAudio" src="${loadedAudioBase64}" preload="auto"></audio>\n`;
+        audioPlayHook = `
+          const aud = document.getElementById('bundledMasterAudio');
+          if (aud && aud.paused) {
+            aud.play().catch(() => {});
+          }
+        `;
+      }
+
+      if (!finalCode.includes('id="strict-1080p-lock"')) {
+        const lockStyle = `
+<style id="strict-1080p-lock">
+  html {
+    background: #000000 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body {
+    width: 1920px !important;
+    height: 1080px !important;
+    min-width: 1920px !important;
+    max-width: 1920px !important;
+    min-height: 1080px !important;
+    max-height: 1080px !important;
+    overflow: hidden !important;
+    position: relative !important;
+    transform-origin: center center !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    will-change: transform;
+  }
+</style>`;
+
+        const lockScript = `${audioHtmlTag}
+<script>
+  (function lockExact1080pChromeClean() {
+    function fitExactCanvas() {
+      const vw = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+      const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      const scale = Math.min(vw / 1920, vh / 1080);
+      document.body.style.transform = 'scale(' + scale + ')';
+    }
+    window.addEventListener('resize', fitExactCanvas);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', fitExactCanvas);
+    fitExactCanvas();
+
+    // Chrome में खुलने पर पहली बार क्लिक/टैप करते ही ऊपर का सर्च बार हटाकर 100% Fullscreen करना व ऑडियो चलाना
+    function activateCleanFullscreenAndAudio() {
+      const el = document.documentElement;
+      if (!document.fullscreenElement) {
+        const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if (req) {
+          req.call(el).then(() => {
+            if (screen.orientation && screen.orientation.lock) {
+              screen.orientation.lock('landscape').catch(() => {});
+            }
+            setTimeout(fitExactCanvas, 120);
+          }).catch(() => {});
+        }
+      }
+      ${audioPlayHook}
+    }
+    document.addEventListener('click', activateCleanFullscreenAndAudio, { capture: true });
+  })();
+<\/script>`;
+
+        const headIdx = finalCode.toLowerCase().lastIndexOf('</head>');
+        finalCode = headIdx !== -1 ? finalCode.slice(0, headIdx) + lockStyle + "\n" + finalCode.slice(headIdx) : lockStyle + "\n" + finalCode;
+
+        const bodyIdx = finalCode.toLowerCase().lastIndexOf('</body>');
+        finalCode = bodyIdx !== -1 ? finalCode.slice(0, bodyIdx) + lockScript + "\n" + finalCode.slice(bodyIdx) : finalCode + "\n" + lockScript;
+      }
+
+      const blob = new Blob([finalCode], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = includeAudio ? 'final_1080p_with_audio.html' : 'final_1080p_video.html';
+      a.click();
+      showToast(includeAudio ? "ऑडियो सहित 1080p HTML फाइल डाउनलोड हो गई!" : "1080p HTML फाइल डाउनलोड हो गई!");
+    }
+
+    function undoMerge() {
+      if (backupStack.length === 0) return;
+      mainCodeEl.value = backupStack.pop();
+      if (backupStack.length === 0) undoBtn.disabled = true;
+      renderPreview(true);
+      showToast("पिछला बदलाव वापस (Undo) कर दिया गया!");
+    }
+
+    function loadFile() { document.getElementById('fileInput').click(); }
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        mainCodeEl.value = ev.target.result;
+        renderPreview(true);
+        showToast(`फाइल लोड हो गई (${file.name})`);
+      };
+      reader.readAsText(file);
+    });
+
+    function clearMain() {
+      backupStack.push(mainCodeEl.value);
+      undoBtn.disabled = false;
+      mainCodeEl.value = '';
+      updateStats('');
+      scanScenes('');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+  </script>
+</body>
+</html>
