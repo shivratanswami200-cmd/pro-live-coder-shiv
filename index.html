@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro Live HTML Coder — GitHub Studio (1920×1080 Locked)</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <span>⚡ Pro Live HTML Coder</span>
+      <span class="lock-pill">🔒 1920×1080 Fixed</span>
+      <span class="stats" id="sizeBadge">Lines: 0 | 0 KB</span>
+    </div>
+
+    <div class="actions">
+      <button onclick="copyPromptRule()" class="btn-ai" title="नई चैट में AI को देने के लिए नियम कॉपी करें">📋 Copy AI Prompt</button>
+      <button id="undoBtn" onclick="undoMerge()" disabled title="पिछला मर्ज वापस लें">↩ Undo</button>
+      <button onclick="loadFile()">📂 खोलें</button>
+      <input type="file" id="fileInput" accept=".html,.htm,.txt" hidden />
+      <button class="primary" onclick="renderPreview(true)">▶ Run</button>
+      <button class="export-btn" onclick="downloadCode()">💾 Export 1080p HTML</button>
+    </div>
+  </header>
+
+  <!-- Audio Timeline & Cue Marker Bar -->
+  <div class="audio-bar">
+    <button onclick="document.getElementById('audioInput').click()">🎵 Audio लोड करें (.mp3/.wav)</button>
+    <input type="file" id="audioInput" accept="audio/*" hidden />
+    <audio id="audioPlayer" controls></audio>
+    <button class="cue-btn" onclick="markAudioCue()">📍 Mark Cue Time</button>
+    <div class="cue-list" id="cueList">कोई Cue मार्क नहीं है — ऑडियो चलाकर समय नोट करें</div>
+  </div>
+
+  <main>
+    <!-- Left Column: Code Editor + Smart Snippet Merger -->
+    <div class="left-pane">
+      <div class="editor-box">
+        <div class="box-header">
+          <span>1. मुख्य HTML प्रोजेक्ट (15,000+ लाइंस सुरक्षित)</span>
+          <button onclick="clearMain()" class="mini-btn">Clear</button>
+        </div>
+        <textarea id="mainCode" spellcheck="false" placeholder="यहाँ अपना मुख्य HTML कोड पेस्ट करें..."></textarea>
+      </div>
+
+      <div class="snippet-box">
+        <div class="box-header">
+          <span>2. नया हिस्सा या सीन कोड यहाँ पेस्ट करें</span>
+          <div class="merge-controls">
+            <select id="sceneSelector" title="कहाँ मर्ज करना है">
+              <option value="auto">🧠 Auto-Intelligence</option>
+              <option value="cursor">📍 At Cursor Position</option>
+              <option value="bodyEnd">⬇ End of &lt;/body&gt;</option>
+            </select>
+            <button class="ai-merge-btn" onclick="intelligentMerge()">✨ Auto-Merge</button>
+          </div>
+        </div>
+        <textarea id="snippetCode" spellcheck="false" placeholder="AI से मिला नया Scene, SVG, CSS या JS यहाँ पेस्ट करें और 'Auto-Merge' दबाएं..."></textarea>
+      </div>
+    </div>
+
+    <!-- Right Column: Strict 1920x1080 Live Preview -->
+    <div class="right-pane">
+      <div class="preview-toolbar">
+        <span id="statusText">1920×1080 Strict Pixel-Lock Ready</span>
+        <span id="renderTime">Scale: 100% | 0 ms</span>
+      </div>
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <div id="stageScaler">
+          <iframe id="previewFrame" sandbox="allow-scripts allow-same-origin allow-modals"></iframe>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast">सफलतापूर्वक मर्ज हो गया!</div>
+
+  <script src="engine.js"></script>
+</body>
+</html>
