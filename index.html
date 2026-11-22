@@ -10,7 +10,7 @@
       font-family: system-ui, -apple-system, sans-serif;
       background: radial-gradient(circle at 50% 35%, #162238 0%, #090d16 70%, #05070c 100%);
       color: #f8fafc;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -18,7 +18,7 @@
       padding: 20px;
     }
     .hub-container {
-      max-width: 920px;
+      max-width: 1120px;
       width: 100%;
       text-align: center;
     }
@@ -49,7 +49,7 @@
     }
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 24px;
     }
     .studio-btn {
@@ -75,6 +75,10 @@
     .studio-btn.multi:hover {
       border-color: #3b82f6;
       box-shadow: 0 20px 50px rgba(59, 130, 246, 0.2);
+    }
+    .studio-btn.pro-live:hover {
+      border-color: #8b5cf6;
+      box-shadow: 0 20px 50px rgba(139, 92, 246, 0.25);
     }
     .icon-box {
       font-size: 38px;
@@ -103,13 +107,16 @@
     .studio-btn.multi .launch-tag {
       color: #60a5fa;
     }
+    .studio-btn.pro-live .launch-tag {
+      color: #a78bfa;
+    }
   </style>
 </head>
 <body>
   <div class="hub-container">
     <div class="badge">⚡ 1920×1080 STRICT PIXEL-LOCK ENGINE</div>
     <h1>Pro Live HTML Coder</h1>
-    <p class="subtitle">अपना पसंदीदा स्टूडियो मोड चुनें — दोनों में 1920×1080 फिक्स लॉक और ऑडियो सिंक उपलब्ध है</p>
+    <p class="subtitle">अपना पसंदीदा स्टूडियो मोड चुनें — सभी में 1920×1080 फिक्स लॉक और ऑडियो सिंक उपलब्ध है</p>
 
     <div class="cards-grid">
       <!-- Button 1: Single-File Ultra Power Studio -->
@@ -134,6 +141,18 @@
           </div>
         </div>
         <div class="launch-tag">थ्री-कोड फाइल्स खोलें →</div>
+      </a>
+
+      <!-- Button 3: Pro Live HTML (Attach Audio+Video + Mute HTML Voice) -->
+      <a href="pro-live.html" class="studio-btn pro-live">
+        <div>
+          <div class="icon-box">🎬</div>
+          <div class="card-title">Pro Live HTML</div>
+          <div class="card-desc">
+            अपडेटेड सिंक इंजन — <b>Attach Audio+Video</b> टॉगल, <b>Mute HTML Voice</b> कंट्रोल, स्मार्ट AI ऑटो-मर्ज और फुल-साइज 1080p एक्सपोर्ट के साथ।
+          </div>
+        </div>
+        <div class="launch-tag">Pro Live HTML खोलें →</div>
       </a>
     </div>
   </div>
